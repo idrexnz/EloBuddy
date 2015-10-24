@@ -21,9 +21,9 @@ namespace LeeSin
         {
             get
             {
-                if (Util.myHero.HasBuff("blindmonkpassive_cosmetic"))
+                if (Util.MyHero.HasBuff("blindmonkpassive_cosmetic"))
                 {
-                    return Util.myHero.GetBuff("blindmonkpassive_cosmetic").Count;
+                    return Util.MyHero.GetBuff("blindmonkpassive_cosmetic").Count;
                 }
                 return 0;
             }
@@ -35,7 +35,7 @@ namespace LeeSin
 
         private static void Loading_OnLoadingComplete(EventArgs args)
         {
-            if (Util.myHero.Hero != EloBuddy.Champion.LeeSin) { return; }
+            if (Util.MyHero.Hero != EloBuddy.Champion.LeeSin) { return; }
             Chat.Print(AddonName + " made by " + Author + " loaded, have fun!.");
             SpellManager.Init();
             MenuManager.Init();
@@ -61,7 +61,7 @@ namespace LeeSin
             if (SpellManager.CanCastW1)
             {
                 var obj = GetBestObjectNearTo(target.Position);
-                if (obj != null && Extensions.Distance(Util.myHero, target, true) > Extensions.Distance(obj, target, true))
+                if (obj != null && Extensions.Distance(Util.MyHero, target, true) > Extensions.Distance(obj, target, true))
                 {
                     SpellManager.CastW1(obj);
                 }
@@ -80,7 +80,7 @@ namespace LeeSin
             if (SpellManager.CanCastW1)
             {
                 var obj = GetBestObjectNearTo(target.Position);
-                if (obj != null && Extensions.Distance(Util.myHero, target, true) > Extensions.Distance(obj, target, true))
+                if (obj != null && Extensions.Distance(Util.MyHero, target, true) > Extensions.Distance(obj, target, true))
                 {
                     SpellManager.CastW1(obj);
                 }
@@ -149,7 +149,7 @@ namespace LeeSin
                 }
                 if (_Q.IsValidTarget && target.IsValidTarget())
                 {
-                    if (Extensions.Distance(target, _Q.Target, true) < Extensions.Distance(Util.myHero, _Q.Target, true))
+                    if (Extensions.Distance(target, _Q.Target, true) < Extensions.Distance(Util.MyHero, _Q.Target, true))
                     {
                         SpellManager.CastQ2(_Q.Target);
                     }

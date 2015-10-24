@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using EloBuddy;
 using EloBuddy.SDK;
-using EloBuddy.SDK.Enumerations;
-using EloBuddy.SDK.Events;
-using EloBuddy.SDK.Menu;
-using EloBuddy.SDK.Menu.Values;
-using EloBuddy.SDK.Rendering;
-using SharpDX;
 
 
 namespace Template
@@ -17,12 +9,12 @@ namespace Template
     {
 
         public static float RefreshTime = 0.4f;
-        static Dictionary<int, DamageResult> PredictedDamage = new Dictionary<int, DamageResult>() { };
+        static Dictionary<int, DamageResult> PredictedDamage = new Dictionary<int, DamageResult>();
         static float Overkill
         {
             get
             {
-                return (float)((100 + MenuManager.MiscMenu.GetSliderValue("Overkill")) / 100);
+                return (100 + MenuManager.MiscMenu.GetSliderValue("Overkill")) / 100;
             }
         }
         public static float GetSpellDamage(this SpellSlot slot, Obj_AI_Base target)
@@ -40,9 +32,9 @@ namespace Template
                     case SpellSlot.W:
                         return Util.MyHero.CalculateDamageOnUnit(target, DamageType.Magical, (float)40 * slot.GetSpellDataInst().Level + 40 + 0.7f * Util.MyHero.FlatMagicDamageMod);
                     case SpellSlot.E:
-                        return Util.MyHero.CalculateDamageOnUnit(target, DamageType.Physical, (float)45 * slot.GetSpellDataInst().Level + 25 + 0.4f * Util.MyHero.FlatPhysicalDamageMod);
+                        return Util.MyHero.CalculateDamageOnUnit(target, DamageType.Magical, (float)45 * slot.GetSpellDataInst().Level + 25 + 0.4f * Util.MyHero.FlatPhysicalDamageMod);
                     case SpellSlot.R:
-                        return (3 + BallManager.Balls.Count) * Util.MyHero.CalculateDamageOnUnit(target, DamageType.Physical, (float)45 * slot.GetSpellDataInst().Level + 45 + 0.2f * Util.MyHero.FlatPhysicalDamageMod);
+                        return (3 + BallManager.Balls.Count) * Util.MyHero.CalculateDamageOnUnit(target, DamageType.Magical, (float)45 * slot.GetSpellDataInst().Level + 45 + 0.2f * Util.MyHero.FlatPhysicalDamageMod);
                 }
             }
             return Util.MyHero.GetSpellDamage(target, slot);
@@ -50,42 +42,42 @@ namespace Template
 
         public static DamageResult GetComboDamage(this Obj_AI_Base target, bool q, bool w, bool e, bool r)
         {
-            var ComboDamage = 0f;
+            var comboDamage = 0f;
             var ManaWasted = 0f;
             if (target.IsValidTarget())
             {
                 if (q)
                 {
-                    ComboDamage += SpellSlot.Q.GetSpellDamage(target);
+                    comboDamage += SpellSlot.Q.GetSpellDamage(target);
                     ManaWasted += SpellSlot.Q.Mana();
                 }
                 if (w)
                 {
-                    ComboDamage += SpellSlot.W.GetSpellDamage(target);
+                    comboDamage += SpellSlot.W.GetSpellDamage(target);
                     ManaWasted += SpellSlot.W.Mana();
                 }
                 if (e)
                 {
-                    ComboDamage += SpellSlot.E.GetSpellDamage(target);
+                    comboDamage += SpellSlot.E.GetSpellDamage(target);
                     ManaWasted += SpellSlot.E.Mana();
                 }
                 if (r)
                 {
-                    ComboDamage += SpellSlot.R.GetSpellDamage(target);
+                    comboDamage += SpellSlot.R.GetSpellDamage(target);
                     ManaWasted += SpellSlot.R.Mana();
                 }
-                if (SpellManager.Ignite_IsReady)
+                if (SpellManager.IgniteIsReady)
                 {
-                    ComboDamage += Util.MyHero.GetSummonerSpellDamage(target, DamageLibrary.SummonerSpells.Ignite);
+                    comboDamage += Util.MyHero.GetSummonerSpellDamage(target, DamageLibrary.SummonerSpells.Ignite);
                 }
-                if (SpellManager.Smite_IsReady)
+                if (SpellManager.SmiteIsReady)
                 {
-                    ComboDamage += Util.MyHero.GetSummonerSpellDamage(target, DamageLibrary.SummonerSpells.Smite);
+                    comboDamage += Util.MyHero.GetSummonerSpellDamage(target, DamageLibrary.SummonerSpells.Smite);
                 }
-                ComboDamage += Util.MyHero.GetAutoAttackDamage(target, true);
+                comboDamage += Util.MyHero.GetAutoAttackDamage(target, true);
             }
-            ComboDamage = ComboDamage * Overkill;
-            return new DamageResult(target, ComboDamage, ManaWasted);
+            comboDamage = comboDamage * Overkill;
+            return new DamageResult(target, comboDamage, ManaWasted);
         }
         public static DamageResult GetBestComboR(this Obj_AI_Base target)
         {

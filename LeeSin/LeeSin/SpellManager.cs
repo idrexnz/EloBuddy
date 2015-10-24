@@ -43,17 +43,17 @@ namespace LeeSin
             R = new Spell.Targeted(SpellSlot.R, 375);
             RKick = new Spell.Skillshot(SpellSlot.R, 275 + 550, SkillShotType.Linear, 400, 600, 75);
             RKick.AllowedCollisionCount = int.MaxValue;
-            var slot = Util.myHero.SpellSlotFromName("summonerdot");
+            var slot = Util.MyHero.SpellSlotFromName("summonerdot");
             if (slot != SpellSlot.Unknown)
             {
                 Ignite = new Spell.Targeted(slot, 600);
             }
-            slot = Util.myHero.SpellSlotFromName("smite");
+            slot = Util.MyHero.SpellSlotFromName("smite");
             if (slot != SpellSlot.Unknown)
             {
                 Smite = new Spell.Targeted(slot, 500);
             }
-            slot = Util.myHero.SpellSlotFromName("flash");
+            slot = Util.MyHero.SpellSlotFromName("flash");
             if (slot != SpellSlot.Unknown)
             {
                 Flash = new Spell.Skillshot(slot, 400, SkillShotType.Circular);
@@ -63,7 +63,7 @@ namespace LeeSin
         }
         public static bool IsInSmiteRange(this Obj_AI_Base target)
         {
-            return target.IsValidTarget(Smite.Range + Util.myHero.BoundingRadius + target.BoundingRadius);
+            return target.IsValidTarget(Smite.Range + Util.MyHero.BoundingRadius + target.BoundingRadius);
         }
         public static SpellSlot SpellSlotFromName(this AIHeroClient hero, string name)
         {
@@ -129,7 +129,7 @@ namespace LeeSin
             {
                 if (target.HaveQ())
                 {
-                    Util.myHero.Spellbook.CastSpell(SpellSlot.Q, true);
+                    Util.MyHero.Spellbook.CastSpell(SpellSlot.Q, true);
                 }
                 else if (_Q.EndTime - Game.Time < 0.5f)
                 {
@@ -155,7 +155,7 @@ namespace LeeSin
         {
             if (SpellSlot.W.IsReady() && SpellSlot.W.IsFirstSpell() && target.IsValidAlly())
             {
-                Util.myHero.Spellbook.CastSpell(W1.Slot, target, true);
+                Util.MyHero.Spellbook.CastSpell(W1.Slot, target, true);
             }
         }
 
@@ -189,7 +189,7 @@ namespace LeeSin
                 var pred = E1.GetPrediction(target);
                 if (pred.HitChance == HitChance.High)
                 {
-                    Util.myHero.Spellbook.CastSpell(E1.Slot, true);
+                    Util.MyHero.Spellbook.CastSpell(E1.Slot, true);
                 }
             }
         }
@@ -200,7 +200,7 @@ namespace LeeSin
                 var pred = E2.GetPrediction(target);
                 if (pred.HitChance == HitChance.High)
                 {
-                    Util.myHero.Spellbook.CastSpell(E2.Slot, true);
+                    Util.MyHero.Spellbook.CastSpell(E2.Slot, true);
                 }
             }
         }
@@ -208,7 +208,7 @@ namespace LeeSin
         {
             if (SpellSlot.R.IsReady() && target.IsValidTarget(R.Range))
             {
-                Util.myHero.Spellbook.CastSpell(R.Slot, target, true);
+                Util.MyHero.Spellbook.CastSpell(R.Slot, target, true);
             }
         }
         public static float HitChancePercent(this SpellSlot s)
@@ -230,20 +230,20 @@ namespace LeeSin
         }
         public static SpellDataInst GetSpellDataInst(this SpellSlot slot)
         {
-            return Util.myHero.Spellbook.GetSpell(slot);
+            return Util.MyHero.Spellbook.GetSpell(slot);
         }
         public static bool CanCastW1
         {
             get
             {
-                return SpellSlot.W.IsReady() && SpellSlot.W.IsFirstSpell() && Util.myHero.Mana >= SpellSlot.W.GetSpellDataInst().SData.ManaCostArray[SpellSlot.W.GetSpellDataInst().Level - 1];
+                return SpellSlot.W.IsReady() && SpellSlot.W.IsFirstSpell() && Util.MyHero.Mana >= SpellSlot.W.GetSpellDataInst().SData.ManaCostArray[SpellSlot.W.GetSpellDataInst().Level - 1];
             }
         }
         public static bool CanCastQ1
         {
             get
             {
-                return SpellSlot.Q.IsReady() && SpellSlot.Q.IsFirstSpell() && Util.myHero.Mana >= SpellSlot.Q.GetSpellDataInst().SData.ManaCostArray[SpellSlot.Q.GetSpellDataInst().Level - 1];
+                return SpellSlot.Q.IsReady() && SpellSlot.Q.IsFirstSpell() && Util.MyHero.Mana >= SpellSlot.Q.GetSpellDataInst().SData.ManaCostArray[SpellSlot.Q.GetSpellDataInst().Level - 1];
             }
         }
         public static bool Smite_IsReady
@@ -276,12 +276,12 @@ namespace LeeSin
                 {
                     if (CanUseSmiteOnHeroes)
                     {
-                        return Util.myHero.GetSummonerSpellDamage(target, DamageLibrary.SummonerSpells.Smite);
+                        return Util.MyHero.GetSummonerSpellDamage(target, DamageLibrary.SummonerSpells.Smite);
                     }
                 }
                 else
                 {
-                    var level = Util.myHero.Level;
+                    var level = Util.MyHero.Level;
                     return (new[] { 20 * level + 370, 30 * level + 330, 40 * level + 240, 50 * level + 100 }).Max();
                 }
             }

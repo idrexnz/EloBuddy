@@ -28,11 +28,11 @@ namespace LeeSin
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-            if (Util.myHero.IsDead) { return; }
+            if (Util.MyHero.IsDead) { return; }
             if (Menu.GetCheckBoxValue("Disable")) { return; }
             if (Menu.GetCheckBoxValue("Combo.Mode"))
             {
-                var pos = Util.myHero.Position.WorldToScreen();
+                var pos = Util.MyHero.Position.WorldToScreen();
                 pos.X = pos.X - 50;
                 Drawing.DrawText(pos, System.Drawing.Color.White, Combo.Menu["Mode"].Cast<Slider>().DisplayName, 15);
             }
@@ -59,19 +59,19 @@ namespace LeeSin
             var color = new ColorBGRA(255, 255, 255, 100);
             if (Menu.GetCheckBoxValue("Q") && SpellSlot.Q.IsReady())
             {
-                Circle.Draw(color, SpellManager.Q_Range, Util.myHero.Position);
+                Circle.Draw(color, SpellManager.Q_Range, Util.MyHero.Position);
             }
             if (Menu.GetCheckBoxValue("W") && SpellSlot.W.IsReady())
             {
-                Circle.Draw(color, SpellManager.W_Range, Util.myHero.Position);
+                Circle.Draw(color, SpellManager.W_Range, Util.MyHero.Position);
             }
             if (Menu.GetCheckBoxValue("E") && SpellSlot.E.IsReady())
             {
-                Circle.Draw(color, SpellManager.E_Range, Util.myHero.Position);
+                Circle.Draw(color, SpellManager.E_Range, Util.MyHero.Position);
             }
             if (Menu.GetCheckBoxValue("R") && SpellSlot.R.IsReady())
             {
-                Circle.Draw(color, SpellManager.R.Range, Util.myHero.Position);
+                Circle.Draw(color, SpellManager.R.Range, Util.MyHero.Position);
             }
         }
     }

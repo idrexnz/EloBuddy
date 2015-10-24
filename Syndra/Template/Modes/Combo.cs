@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using EloBuddy;
+﻿using EloBuddy;
 using EloBuddy.SDK;
-using EloBuddy.SDK.Enumerations;
-using EloBuddy.SDK.Events;
 using EloBuddy.SDK.Menu;
-using EloBuddy.SDK.Menu.Values;
-using EloBuddy.SDK.Rendering;
-using SharpDX;
-
-
 
 namespace Template
 {
@@ -63,10 +53,9 @@ namespace Template
                             }
                             break;
                         case 2:
-                            if (damageI.IsKillable && SpellSlot.R.GetSpellDamage(target) >= target.Health)
+                            if (damageI.IsKillable && damageI.R)
                             {
-                                var damageI2 = target.GetBestComboR();
-                                if (!damageI.IsKillable || (Util.MyHero.HealthPercent <= target.HealthPercent && Util.MyHero.HealthPercent <= 40))
+                                if (!target.GetBestComboR().IsKillable || (Util.MyHero.HealthPercent <= target.HealthPercent && Util.MyHero.HealthPercent <= 40))
                                 {
                                     SpellManager.CastR(target);
                                 }

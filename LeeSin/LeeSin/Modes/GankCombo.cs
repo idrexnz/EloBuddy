@@ -26,7 +26,7 @@ namespace LeeSin
             var target = TargetSelector.Target;
             if (target.IsValidTarget())
             {
-                if (Util.myHero.IsInAutoAttackRange(target) && Champion.PassiveStack > 2 - Menu.GetSliderValue("Gank.Stack")) { return; }
+                if (Util.MyHero.IsInAutoAttackRange(target) && Champion.PassiveStack > 2 - Menu.GetSliderValue("Gank.Stack")) { return; }
                 if (Menu.GetCheckBoxValue("W") && target.IsValidTarget(900f))
                 {
                     if (Menu.GetCheckBoxValue("Gank.Ward") && WardManager.CanCastWard)
@@ -35,7 +35,7 @@ namespace LeeSin
                         {
                             Insec.Execute(); // C H E C K
                         }
-                        else if (Extensions.Distance(Util.myHero, target, true) > Math.Pow(450, 2) && SpellManager.CanCastW1)
+                        else if (Extensions.Distance(Util.MyHero, target, true) > Math.Pow(450, 2) && SpellManager.CanCastW1)
                         {
                             Champion.GapCloseWithWard(target);
                         }

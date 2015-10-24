@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using EloBuddy;
 using EloBuddy.SDK;
-using EloBuddy.SDK.Enumerations;
-using EloBuddy.SDK.Events;
-using EloBuddy.SDK.Menu;
-using EloBuddy.SDK.Menu.Values;
-using EloBuddy.SDK.Rendering;
 using SharpDX;
 
 
@@ -33,6 +26,7 @@ namespace Template
                 return Vector3.Zero;
             }
         }
+
         public bool ObjectIsValid
         {
             get
@@ -53,6 +47,24 @@ namespace Template
             {
                 return ObjectIsValid && !Object.IsTargetable;
             }
+        }
+
+        public bool E_WillHit(Obj_AI_Base target)
+        {
+            if (E_IsOnRange && target.IsValidTarget(SpellManager.QE.Range))
+            {
+                var startPosition = Util.MyHero.Position.To2D() +
+                                        (Position - Util.MyHero.Position).To2D().Normalized() *
+                                        Math.Min(Util.MyHero.Distance(Position), SpellManager.E.Range / 2);
+                var info = target.ServerPosition.To2D().ProjectOn(startPosition, E_EndPosition.To2D());
+                if (info.IsOnSegment &&
+                    target.ServerPosition.To2D().Distance(info.SegmentPoint, true) <=
+                    Math.Pow(1 * (SpellManager.QE.Width + target.BoundingRadius), 2))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         public bool E_IsOnTime
         {

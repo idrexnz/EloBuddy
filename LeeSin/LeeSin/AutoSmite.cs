@@ -37,12 +37,12 @@ namespace LeeSin
             {
                 if (Menu.GetCheckBoxValue("DragonSteal"))
                 {
-                    var minion = EntityManager.MinionsAndMonsters.GetJungleMonsters(Util.myHero.Position, SpellManager.Q2.Range, true).Where(m => m.IsInSmiteRange() && m.IsDragon()).FirstOrDefault();
+                    var minion = EntityManager.MinionsAndMonsters.GetJungleMonsters(Util.MyHero.Position, SpellManager.Q2.Range, true).Where(m => m.IsInSmiteRange() && m.IsDragon()).FirstOrDefault();
                     if (minion != null)
                     {
                         if (minion.Health <= minion.SmiteDamage())
                         {
-                            Util.myHero.Spellbook.CastSpell(SpellManager.Smite.Slot, minion);
+                            Util.MyHero.Spellbook.CastSpell(SpellManager.Smite.Slot, minion);
                         }
                     }
                 }

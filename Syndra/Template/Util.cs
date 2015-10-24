@@ -4,10 +4,6 @@ using System.Linq;
 using EloBuddy;
 using EloBuddy.SDK;
 using EloBuddy.SDK.Enumerations;
-using EloBuddy.SDK.Events;
-using EloBuddy.SDK.Menu;
-using EloBuddy.SDK.Menu.Values;
-using EloBuddy.SDK.Rendering;
 using SharpDX;
 
 namespace Template
@@ -43,13 +39,13 @@ namespace Template
         }
         private static Vector3 Source(this Spell.Skillshot s)
         {
-            return s.SourcePosition.HasValue ? s.SourcePosition.Value : Util.MyHero.Position;
+            return s.SourcePosition.HasValue ? s.SourcePosition.Value : MyHero.Position;
         }
-        public static Obj_AI_Base JungleClear(this Spell.Skillshot s, bool UseCast = true, int NumberOfHits = 1)
+        public static Obj_AI_Base JungleClear(this Spell.Skillshot s, bool useCast = true, int NumberOfHits = 1)
         {
             if (s.IsReady())
             {
-                var minions = EntityManager.MinionsAndMonsters.GetJungleMonsters(s.Source(), s.Range + s.Width, true).OrderBy(m => m.MaxHealth);
+                var minions = EntityManager.MinionsAndMonsters.GetJungleMonsters(s.Source(), s.Range + s.Width).OrderBy(m => m.MaxHealth);
                 if (minions.Count() > 0 && minions.Count() >= NumberOfHits)
                 {
                     switch (s.Type)
@@ -58,7 +54,7 @@ namespace Template
                             var t = s.GetBestLineTarget(minions.ToList<Obj_AI_Base>());
                             if (t.Item1 >= NumberOfHits)
                             {
-                                if (UseCast)
+                                if (useCast)
                                 {
                                     s.Cast(t.Item2);
                                 }
@@ -69,7 +65,7 @@ namespace Template
                             var t2 = s.GetBestCircularTarget(minions.ToList<Obj_AI_Base>());
                             if (t2.Item1 >= NumberOfHits)
                             {
-                                if (UseCast)
+                                if (useCast)
                                 {
                                     s.Cast(t2.Item2);
                                 }
@@ -81,20 +77,20 @@ namespace Template
             }
             return null;
         }
-        public static Obj_AI_Base LaneClear(this Spell.Skillshot s, int NumberOfHits = 1, bool UseCast = true)
+        public static Obj_AI_Base LaneClear(this Spell.Skillshot s, int numberOfHits = 1, bool useCast = true)
         {
             if (s.IsReady())
             {
-                var minions = EntityManager.MinionsAndMonsters.GetLaneMinions(EntityManager.UnitTeam.Enemy, s.Source(), s.Range + s.Width, true);
-                if (minions.Count() > 0 && minions.Count() >= NumberOfHits)
+                var minions = EntityManager.MinionsAndMonsters.GetLaneMinions(EntityManager.UnitTeam.Enemy, s.Source(), s.Range + s.Width);
+                if (minions.Count() > 0 && minions.Count() >= numberOfHits)
                 {
                     switch (s.Type)
                     {
                         case SkillShotType.Linear:
                             var t = s.GetBestLineTarget(minions.ToList<Obj_AI_Base>());
-                            if (t.Item1 >= NumberOfHits)
+                            if (t.Item1 >= numberOfHits)
                             {
-                                if (UseCast)
+                                if (useCast)
                                 {
                                     s.Cast(t.Item2);
                                 }
@@ -103,9 +99,9 @@ namespace Template
                             break;
                         case SkillShotType.Circular:
                             var t2 = s.GetBestCircularTarget(minions.ToList<Obj_AI_Base>());
-                            if (t2.Item1 >= NumberOfHits)
+                            if (t2.Item1 >= numberOfHits)
                             {
-                                if (UseCast)
+                                if (useCast)
                                 {
                                     s.Cast(t2.Item2);
                                 }
@@ -204,14 +200,14 @@ namespace Template
                             }
                             else
                             {
-                                if (Util.MyHero.GetAutoAttackRange(minion) <= Extensions.Distance(Util.MyHero, minion))
+                                if (MyHero.GetAutoAttackRange(minion) <= Extensions.Distance(MyHero, minion))
                                 {
                                     CanCalculate = true;
                                 }
                                 else
                                 {
                                     var speed = Util.MyHero.BasicAttack.MissileSpeed;
-                                    var time = (int)(1000 * Extensions.Distance(Util.MyHero, minion) / speed + Util.MyHero.AttackCastDelay * 1000 + Game.Ping - 100);
+                                    var time = (int)(1000 * Extensions.Distance(MyHero, minion) / speed + MyHero.AttackCastDelay * 1000 + Game.Ping - 100);
                                     var predHealth = Prediction.Health.GetPrediction(minion, time);
                                     if (predHealth <= 0)
                                     {

@@ -33,9 +33,9 @@ namespace LeeSin
         {
             get
             {
-                if (Util.myHero.HasBuff("blindmonkpassive_cosmetic"))
+                if (Util.MyHero.HasBuff("blindmonkpassive_cosmetic"))
                 {
-                    return Util.myHero.GetBuff("blindmonkpassive_cosmetic").EndTime - Game.Time < 0.25f + Util.myHero.AttackCastDelay;
+                    return Util.MyHero.GetBuff("blindmonkpassive_cosmetic").EndTime - Game.Time < 0.25f + Util.MyHero.AttackCastDelay;
                 }
                 return false;
             }
@@ -46,17 +46,17 @@ namespace LeeSin
             {
                 if (Menu.GetCheckBoxValue("Smite"))
                 {
-                    var dragon = EntityManager.MinionsAndMonsters.GetJungleMonsters(Util.myHero.Position, SpellManager.Q2.Range, true).Where(m => m.IsInSmiteRange() && m.IsDragon()).FirstOrDefault();
+                    var dragon = EntityManager.MinionsAndMonsters.GetJungleMonsters(Util.MyHero.Position, SpellManager.Q2.Range, true).Where(m => m.IsInSmiteRange() && m.IsDragon()).FirstOrDefault();
                     if (dragon != null)
                     {
                         if (dragon.Health <= dragon.SmiteDamage())
                         {
-                            Util.myHero.Spellbook.CastSpell(SpellManager.Smite.Slot, dragon);
+                            Util.MyHero.Spellbook.CastSpell(SpellManager.Smite.Slot, dragon);
                         }
                     }
                 }
             }
-            var minion = EntityManager.MinionsAndMonsters.GetJungleMonsters(Util.myHero.Position, SpellManager.Q1.Range, true).Where(m => m.IsValidTarget()).OrderBy(m => m.MaxHealth).LastOrDefault();
+            var minion = EntityManager.MinionsAndMonsters.GetJungleMonsters(Util.MyHero.Position, SpellManager.Q1.Range, true).Where(m => m.IsValidTarget()).OrderBy(m => m.MaxHealth).LastOrDefault();
             if (minion != null)
             {
                 if (minion.IsDragon() && SpellManager.Smite_IsReady && SpellSlot.Q.IsReady())
@@ -66,23 +66,23 @@ namespace LeeSin
                         return;
                     }
                 }
-                if (Util.myHero.IsInAutoAttackRange(minion))
+                if (Util.MyHero.IsInAutoAttackRange(minion))
                 {
                     if (WillEndSoon)
                     {
                         if (SpellSlot.Q.IsReady() && !SpellSlot.Q.IsFirstSpell() && Menu.GetCheckBoxValue("Q"))
                         {
-                            Util.myHero.Spellbook.CastSpell(SpellSlot.Q, true);
+                            Util.MyHero.Spellbook.CastSpell(SpellSlot.Q, true);
                             return;
                         }
                         if (SpellSlot.W.IsReady() && !SpellSlot.W.IsFirstSpell() && Menu.GetCheckBoxValue("W"))
                         {
-                            Util.myHero.Spellbook.CastSpell(SpellSlot.W, true);
+                            Util.MyHero.Spellbook.CastSpell(SpellSlot.W, true);
                             return;
                         }
-                        if (SpellSlot.E.IsReady() && !SpellSlot.E.IsFirstSpell() && Menu.GetCheckBoxValue("E") && Extensions.Distance(minion, Util.myHero, true) <= Math.Pow(SpellManager.E_Range, 2))
+                        if (SpellSlot.E.IsReady() && !SpellSlot.E.IsFirstSpell() && Menu.GetCheckBoxValue("E") && Extensions.Distance(minion, Util.MyHero, true) <= Math.Pow(SpellManager.E_Range, 2))
                         {
-                            Util.myHero.Spellbook.CastSpell(SpellSlot.E, true);
+                            Util.MyHero.Spellbook.CastSpell(SpellSlot.E, true);
                             return;
                         }
                     }
@@ -93,27 +93,27 @@ namespace LeeSin
                 }
                 if (Orbwalker.CanMove)
                 {
-                    if (Menu.GetCheckBoxValue("W") && minion.IsInAutoAttackRange(Util.myHero) && Util.myHero.HealthPercent <= 40)
+                    if (Menu.GetCheckBoxValue("W") && minion.IsInAutoAttackRange(Util.MyHero) && Util.MyHero.HealthPercent <= 40)
                     {
                         if (SpellSlot.W.IsReady() && SpellSlot.W.IsFirstSpell())
                         {
-                            Util.myHero.Spellbook.CastSpell(SpellSlot.W, Util.myHero, true);
+                            Util.MyHero.Spellbook.CastSpell(SpellSlot.W, Util.MyHero, true);
                             return;
                         }
                     }
                     if (SpellSlot.Q.IsReady() && !SpellSlot.Q.IsFirstSpell() && Menu.GetCheckBoxValue("Q"))
                     {
-                        Util.myHero.Spellbook.CastSpell(SpellSlot.Q, true);
+                        Util.MyHero.Spellbook.CastSpell(SpellSlot.Q, true);
                         return;
                     }
                     if (SpellSlot.W.IsReady() && !SpellSlot.W.IsFirstSpell() && Menu.GetCheckBoxValue("W"))
                     {
-                        Util.myHero.Spellbook.CastSpell(SpellSlot.W, true);
+                        Util.MyHero.Spellbook.CastSpell(SpellSlot.W, true);
                         return;
                     }
-                    if (SpellSlot.E.IsReady() && !SpellSlot.E.IsFirstSpell() && Menu.GetCheckBoxValue("E") && Extensions.Distance(minion, Util.myHero, true) <= Math.Pow(SpellManager.E_Range, 2))
+                    if (SpellSlot.E.IsReady() && !SpellSlot.E.IsFirstSpell() && Menu.GetCheckBoxValue("E") && Extensions.Distance(minion, Util.MyHero, true) <= Math.Pow(SpellManager.E_Range, 2))
                     {
-                        Util.myHero.Spellbook.CastSpell(SpellSlot.E, true);
+                        Util.MyHero.Spellbook.CastSpell(SpellSlot.E, true);
                         return;
                     }
                     if (SpellSlot.Q.IsReady() && SpellSlot.Q.IsFirstSpell() && Menu.GetCheckBoxValue("Q"))
@@ -121,20 +121,20 @@ namespace LeeSin
                         var pred = SpellManager.Q1.GetPrediction(minion);
                         if (pred.HitChancePercent >= SpellSlot.Q.HitChancePercent())
                         {
-                            Util.myHero.Spellbook.CastSpell(SpellSlot.Q, pred.CastPosition, true);
+                            Util.MyHero.Spellbook.CastSpell(SpellSlot.Q, pred.CastPosition, true);
                             return;
                         }
                     }
-                    if (SpellSlot.E.IsReady() && SpellSlot.E.IsFirstSpell() && Menu.GetCheckBoxValue("E") && Extensions.Distance(minion, Util.myHero, true) <= Math.Pow(SpellManager.E_Range, 2))
+                    if (SpellSlot.E.IsReady() && SpellSlot.E.IsFirstSpell() && Menu.GetCheckBoxValue("E") && Extensions.Distance(minion, Util.MyHero, true) <= Math.Pow(SpellManager.E_Range, 2))
                     {
-                        Util.myHero.Spellbook.CastSpell(SpellSlot.E, true);
+                        Util.MyHero.Spellbook.CastSpell(SpellSlot.E, true);
                         return;
                     }
-                    if (Menu.GetCheckBoxValue("W") && minion.IsInAutoAttackRange(Util.myHero))
+                    if (Menu.GetCheckBoxValue("W") && minion.IsInAutoAttackRange(Util.MyHero))
                     {
                         if (SpellSlot.W.IsReady() && SpellSlot.W.IsFirstSpell())
                         {
-                            Util.myHero.Spellbook.CastSpell(SpellSlot.W, Util.myHero, true);
+                            Util.MyHero.Spellbook.CastSpell(SpellSlot.W, Util.MyHero, true);
                             return;
                         }
                     }

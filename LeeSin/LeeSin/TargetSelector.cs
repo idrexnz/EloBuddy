@@ -29,7 +29,7 @@ namespace LeeSin
         {
             if (args.Msg == (uint)WindowMessages.LeftButtonDown)
             {
-                var target = EloBuddy.SDK.TargetSelector.GetTarget(200f, damageType, Util.mousePos);
+                var target = EloBuddy.SDK.TargetSelector.GetTarget(200f, damageType, Util.MousePos);
                 if (target.IsValidTarget())
                 {
                     ForcedTarget = target;
@@ -47,7 +47,7 @@ namespace LeeSin
                         return ForcedTarget;
                     }
                 }
-                return EloBuddy.SDK.TargetSelector.GetTarget(Range, damageType, Util.myHero.Position);
+                return EloBuddy.SDK.TargetSelector.GetTarget(Range, damageType, Util.MyHero.Position);
             }
         }
 

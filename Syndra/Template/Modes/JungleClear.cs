@@ -33,9 +33,10 @@ namespace Template
         {
             if (Util.MyHero.ManaPercent >= Menu.GetSliderValue("Mana"))
             {
-                if (Menu.GetCheckBoxValue("E")) { SpellManager.CastE(SpellManager.E.JungleClear(false)); }
-                if (Menu.GetCheckBoxValue("W")) { SpellManager.CastW(SpellManager.W.JungleClear(false)); }
-                if (Menu.GetCheckBoxValue("Q")) { SpellManager.CastQ(SpellManager.Q.JungleClear(false)); }
+                var minion = SpellManager.W.JungleClear(false);
+                if (Menu.GetCheckBoxValue("E")) { SpellManager.CastE(minion); }
+                if (Menu.GetCheckBoxValue("W")) { SpellManager.CastW(minion); }
+                if (Menu.GetCheckBoxValue("Q")) { SpellManager.CastQ(minion); }
             }
         }
     }

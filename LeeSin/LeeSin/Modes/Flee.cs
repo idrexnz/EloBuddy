@@ -34,7 +34,7 @@ namespace LeeSin
         {
             if (SpellManager.CanCastW1)
             {
-                var obj = Champion.GetBestObjectNearTo(Util.mousePos);
+                var obj = Champion.GetBestObjectNearTo(Util.MousePos);
                 if (obj != null && Menu.GetCheckBoxValue("W"))
                 {
                     SpellManager.CastW1(obj);
@@ -43,7 +43,7 @@ namespace LeeSin
                 {
                     if (WardManager.CanCastWard)
                     {
-                        WardManager.CastWardTo(Util.mousePos);
+                        WardManager.CastWardTo(Util.MousePos);
                     }
                 }
             }

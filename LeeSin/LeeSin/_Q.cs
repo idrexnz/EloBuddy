@@ -21,7 +21,7 @@ namespace LeeSin
         private static Obj_AI_Minion Smite_Target = null;
         public static void Init()
         {
-            Game.OnUpdate += Game_OnTick;
+            Game.OnTick += Game_OnTick;
             Obj_AI_Base.OnBuffGain += Obj_AI_Base_OnBuffGain;
             Obj_AI_Base.OnBuffLose += Obj_AI_Base_OnBuffLose;
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
@@ -40,8 +40,8 @@ namespace LeeSin
             }
             else
             {
-                SpellManager.Q1.SourcePosition = Util.myHero.Position;
-                SpellManager.Q1.RangeCheckSource = Util.myHero.Position;
+                SpellManager.Q1.SourcePosition = Util.MyHero.Position;
+                SpellManager.Q1.RangeCheckSource = Util.MyHero.Position;
                 SpellManager.Q1.AllowedCollisionCount = 0;
                 SpellManager.Q1.CastDelay = 250;
             }
@@ -52,7 +52,7 @@ namespace LeeSin
                     var CanSmite = false;
                     if (Game.Time - LastCastTime <= 0.25f)
                     {
-                        if (SpellManager.Q1.Width + Smite_Target.BoundingRadius > Extensions.Distance(Util.myHero, Smite_Target))
+                        if (SpellManager.Q1.Width + Smite_Target.BoundingRadius > Extensions.Distance(Util.MyHero, Smite_Target))
                         {
                             CanSmite = true;
                         }
@@ -69,7 +69,7 @@ namespace LeeSin
                     }
                     if (CanSmite)
                     {
-                        Util.myHero.Spellbook.CastSpell(SpellManager.Smite.Slot, Smite_Target);
+                        Util.MyHero.Spellbook.CastSpell(SpellManager.Smite.Slot, Smite_Target);
                     }
                 }
             }
@@ -190,7 +190,7 @@ namespace LeeSin
                 var pred = SpellManager.Q1.GetPrediction(target);
                 if (pred.HitChancePercent >= SpellSlot.Q.HitChancePercent())
                 {
-                    var minions = pred.GetCollisionObjects<Obj_AI_Minion>().Where(m => m.IsValidTarget() && Extensions.Distance(Util.myHero, m, true) < Extensions.Distance(Util.myHero, target, true));
+                    var minions = pred.GetCollisionObjects<Obj_AI_Minion>().Where(m => m.IsValidTarget() && Extensions.Distance(Util.MyHero, m, true) < Extensions.Distance(Util.MyHero, target, true));
                     var CanSmite = (Combo.IsActive && AutoSmite.Menu.GetCheckBoxValue("Q.Combo")) || (Harass.IsActive && AutoSmite.Menu.GetCheckBoxValue("Q.Harass")) || (Insec.IsActive && AutoSmite.Menu.GetCheckBoxValue("Q.Insec"));
                     if (SpellManager.Smite_IsReady && minions.Count() == 1 && CanSmite)
                     {
@@ -198,15 +198,15 @@ namespace LeeSin
                         if (collision is Obj_AI_Minion && collision.IsInSmiteRange())
                         {
                             var minion = collision as Obj_AI_Minion;
-                            int time = SpellManager.Q1.CastDelay + 1000 * (int)(Extensions.Distance(Util.myHero, minion) / SpellManager.Q1.Speed) + (int)SpellManager.Smite_Delay * 1000 - 70;
-                            if (Prediction.Health.GetPrediction(minion, time) <= Util.myHero.GetSummonerSpellDamage(minion, DamageLibrary.SummonerSpells.Smite))
+                            int time = SpellManager.Q1.CastDelay + 1000 * (int)(Extensions.Distance(Util.MyHero, minion) / SpellManager.Q1.Speed) + (int)SpellManager.Smite_Delay * 1000 - 70;
+                            if (Prediction.Health.GetPrediction(minion, time) <= Util.MyHero.GetSummonerSpellDamage(minion, DamageLibrary.SummonerSpells.Smite))
                             {
                                 Smite_Target = minion;
                                 SpellManager.Q1.Cast(pred.CastPosition);
                             }
                         }
                     }
-                    else if (pred.CollisionObjects.Where(m => m.IsValidTarget() && Extensions.Distance(Util.myHero, m, true) < Extensions.Distance(Util.myHero, target, true)).Count() == 0)
+                    else if (pred.CollisionObjects.Where(m => m.IsValidTarget() && Extensions.Distance(Util.MyHero, m, true) < Extensions.Distance(Util.MyHero, target, true)).Count() == 0)
                     {
                         SpellManager.Q1.Cast(pred.CastPosition);
                     }

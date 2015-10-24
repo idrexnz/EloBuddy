@@ -44,13 +44,13 @@ namespace LeeSin
                         }
                     }
                 }
-                if (Menu.GetCheckBoxValue("Ignite") && SpellManager.Ignite_IsReady && Util.myHero.GetSummonerSpellDamage(enemy, DamageLibrary.SummonerSpells.Ignite) >= enemy.Health)
+                if (Menu.GetCheckBoxValue("Ignite") && SpellManager.Ignite_IsReady && Util.MyHero.GetSummonerSpellDamage(enemy, DamageLibrary.SummonerSpells.Ignite) >= enemy.Health)
                 {
                     SpellManager.Ignite.Cast(enemy);
                 }
-                if (Menu.GetCheckBoxValue("Smite") && SpellManager.CanUseSmiteOnHeroes && enemy.IsInSmiteRange() && Util.myHero.GetSummonerSpellDamage(enemy, DamageLibrary.SummonerSpells.Smite) >= enemy.Health)
+                if (Menu.GetCheckBoxValue("Smite") && SpellManager.CanUseSmiteOnHeroes && enemy.IsInSmiteRange() && Util.MyHero.GetSummonerSpellDamage(enemy, DamageLibrary.SummonerSpells.Smite) >= enemy.Health)
                 {
-                    Util.myHero.Spellbook.CastSpell(SpellManager.Smite.Slot, enemy);
+                    Util.MyHero.Spellbook.CastSpell(SpellManager.Smite.Slot, enemy);
                 }
             }
         }

@@ -44,7 +44,7 @@ namespace LeeSin
                 var target = TargetSelector.Target;
                 if (target.IsValidTarget(WardManager.WardRange))
                 {
-                    if (Util.myHero.IsInAutoAttackRange(target) && Champion.PassiveStack > 2 - Menu.GetSliderValue("Star.Stack")) { return; }
+                    if (Util.MyHero.IsInAutoAttackRange(target) && Champion.PassiveStack > 2 - Menu.GetSliderValue("Star.Stack")) { return; }
                     if (Mode == 0 && Menu.GetCheckBoxValue("W") && Menu.GetCheckBoxValue("Star.Ward") && WardManager.CanWardJump && Insec.IsReady)
                     {
                         Insec.Execute();
@@ -100,7 +100,7 @@ namespace LeeSin
                             case 1:
                                 if (SpellManager.CanCastQ1)
                                 {
-                                    var endpos = target.Position + (target.Position - Util.myHero.Position).Normalized() * SpellManager.RKick.Range;
+                                    var endpos = target.Position + (target.Position - Util.MyHero.Position).Normalized() * SpellManager.RKick.Range;
                                     SpellManager.Q1.SourcePosition = endpos;
                                     SpellManager.Q1.RangeCheckSource = endpos;
                                     var pred = SpellManager.Q1.GetPrediction(target);

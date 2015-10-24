@@ -14,11 +14,20 @@ namespace LeeSin
 {
     public static class Util
     {
-        public static AIHeroClient myHero { get { return ObjectManager.Player; } }
-        public static Vector3 mousePos { get { return Game.CursorPos; } }
+        public static float Extra_AA_Range = 120f;
+        public static AIHeroClient MyHero { get { return ObjectManager.Player; } }
+        public static Vector3 MousePos { get { return Game.CursorPos; } }
         public static bool IsValidAlly(this AttackableUnit unit, float range = float.MaxValue)
         {
-            return unit != null && unit.IsValid && !unit.IsDead && Extensions.Distance(myHero, unit, true) <= Math.Pow(range, 2);
+            return unit != null && unit.IsValid && !unit.IsDead && Extensions.Distance(MyHero, unit, true) <= Math.Pow(range, 2);
+        }
+        public static bool IsInAutoAttackRange(this Obj_AI_Base source, Obj_AI_Base target)
+        {
+            if (Combo.IsActive || Harass.IsActive)
+            {
+                return source != null && target != null && source.IsValid && target.IsValid && !source.IsDead && !target.IsDead && Math.Pow(source.BoundingRadius + target.BoundingRadius + source.AttackRange + Extra_AA_Range, 2) >= Extensions.Distance(source, target, true);
+            }
+            return source != null && target != null && source.IsValid && target.IsValid && !source.IsDead && !target.IsDead && Math.Pow(source.BoundingRadius + target.BoundingRadius + source.AttackRange, 2) >= Extensions.Distance(source, target, true);
         }
         public static int GetPriority(this AIHeroClient hero)
         {

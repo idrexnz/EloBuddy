@@ -34,29 +34,29 @@ namespace LeeSin
                     {
                         if (slot.IsFirstSpell())
                         {
-                            return Util.myHero.CalculateDamageOnUnit(target, DamageType.Physical, (float)30 * slot.GetSpellDataInst().Level + 30 + 0.9f * Util.myHero.FlatPhysicalDamageMod) + Util.myHero.CalculateDamageOnUnit(target, DamageType.Physical, (float)30 * slot.GetSpellDataInst().Level + 30 + 0.9f * Util.myHero.FlatPhysicalDamageMod + 8f * (target.MaxHealth - target.Health) / 100);
+                            return Util.MyHero.CalculateDamageOnUnit(target, DamageType.Physical, (float)30 * slot.GetSpellDataInst().Level + 30 + 0.9f * Util.MyHero.FlatPhysicalDamageMod) + Util.MyHero.CalculateDamageOnUnit(target, DamageType.Physical, (float)30 * slot.GetSpellDataInst().Level + 30 + 0.9f * Util.MyHero.FlatPhysicalDamageMod + 8f * (target.MaxHealth - target.Health) / 100);
                         }
                         else
                         {
-                            return Util.myHero.CalculateDamageOnUnit(target, DamageType.Physical, (float)30 * slot.GetSpellDataInst().Level + 30 + 0.9f * Util.myHero.FlatPhysicalDamageMod + 8f * (target.MaxHealth - target.Health) / 100);
+                            return Util.MyHero.CalculateDamageOnUnit(target, DamageType.Physical, (float)30 * slot.GetSpellDataInst().Level + 30 + 0.9f * Util.MyHero.FlatPhysicalDamageMod + 8f * (target.MaxHealth - target.Health) / 100);
                         }
                     }
                     else
                     {
                         if (slot.IsFirstSpell())
                         {
-                            return Util.myHero.CalculateDamageOnUnit(target, DamageType.Physical, (float)30 * slot.GetSpellDataInst().Level + 30 + 0.9f * Util.myHero.FlatPhysicalDamageMod);
+                            return Util.MyHero.CalculateDamageOnUnit(target, DamageType.Physical, (float)30 * slot.GetSpellDataInst().Level + 30 + 0.9f * Util.MyHero.FlatPhysicalDamageMod);
                         }
                         else
                         {
-                            return Util.myHero.CalculateDamageOnUnit(target, DamageType.Physical, (float)30 * slot.GetSpellDataInst().Level + 30 + 0.9f * Util.myHero.FlatPhysicalDamageMod + 8f * (target.MaxHealth - target.Health) / 100);
+                            return Util.MyHero.CalculateDamageOnUnit(target, DamageType.Physical, (float)30 * slot.GetSpellDataInst().Level + 30 + 0.9f * Util.MyHero.FlatPhysicalDamageMod + 8f * (target.MaxHealth - target.Health) / 100);
                         }
 
                     }
                 }
                 if (slot == SpellSlot.W)
                 {
-                    return Util.myHero.GetAutoAttackDamage(target, true) * 2;
+                    return Util.MyHero.GetAutoAttackDamage(target, true) * 2;
                 }
                 else if (slot == SpellSlot.E)
                 {
@@ -64,25 +64,25 @@ namespace LeeSin
                     {
                         if (slot.IsFirstSpell())
                         {
-                            return Util.myHero.CalculateDamageOnUnit(target, DamageType.Magical, (float)35 * slot.GetSpellDataInst().Level + 25 + 1f * Util.myHero.FlatMagicDamageMod) + Util.myHero.GetAutoAttackDamage(target, true);
+                            return Util.MyHero.CalculateDamageOnUnit(target, DamageType.Magical, (float)35 * slot.GetSpellDataInst().Level + 25 + 1f * Util.MyHero.FlatMagicDamageMod) + Util.MyHero.GetAutoAttackDamage(target, true);
                         }
-                        return Util.myHero.GetAutoAttackDamage(target, true);
+                        return Util.MyHero.GetAutoAttackDamage(target, true);
                     }
                     if (slot.IsFirstSpell())
                     {
-                        return Util.myHero.CalculateDamageOnUnit(target, DamageType.Magical, (float)35 * slot.GetSpellDataInst().Level + 25 + 1f * Util.myHero.FlatMagicDamageMod);
+                        return Util.MyHero.CalculateDamageOnUnit(target, DamageType.Magical, (float)35 * slot.GetSpellDataInst().Level + 25 + 1f * Util.MyHero.FlatMagicDamageMod);
                     }
                     else
                     {
-                        return Util.myHero.GetAutoAttackDamage(target, true);
+                        return Util.MyHero.GetAutoAttackDamage(target, true);
                     }
                 }
                 else if (slot == SpellSlot.R)
                 {
-                    return Util.myHero.CalculateDamageOnUnit(target, DamageType.Physical, (float)200 * slot.GetSpellDataInst().Level + 2.0f * Util.myHero.FlatMagicDamageMod);
+                    return Util.MyHero.CalculateDamageOnUnit(target, DamageType.Physical, (float)200 * slot.GetSpellDataInst().Level + 2.0f * Util.MyHero.FlatMagicDamageMod);
                 }
             }
-            return Util.myHero.GetSpellDamage(target, slot);
+            return Util.MyHero.GetSpellDamage(target, slot);
         }
 
         public static DamageResult GetComboDamage(this Obj_AI_Base target, bool q, bool w, bool e, bool r)
@@ -113,13 +113,13 @@ namespace LeeSin
                 }
                 if (SpellManager.Ignite_IsReady)
                 {
-                    ComboDamage += Util.myHero.GetSummonerSpellDamage(target, DamageLibrary.SummonerSpells.Ignite);
+                    ComboDamage += Util.MyHero.GetSummonerSpellDamage(target, DamageLibrary.SummonerSpells.Ignite);
                 }
                 if (SpellManager.Smite_IsReady)
                 {
-                    ComboDamage += Util.myHero.GetSummonerSpellDamage(target, DamageLibrary.SummonerSpells.Smite);
+                    ComboDamage += Util.MyHero.GetSummonerSpellDamage(target, DamageLibrary.SummonerSpells.Smite);
                 }
-                ComboDamage += Util.myHero.GetAutoAttackDamage(target, true);
+                ComboDamage += Util.MyHero.GetAutoAttackDamage(target, true);
             }
             ComboDamage = ComboDamage * Overkill;
             return new DamageResult(target, ComboDamage, ManaWasted);
@@ -161,7 +161,7 @@ namespace LeeSin
                                         DamageResult damageI2 = target.GetComboDamage(q1, w1, e1, r1);
                                         float d = damageI2.Damage;
                                         float m = damageI2.Mana;
-                                        if (Util.myHero.Mana >= m)
+                                        if (Util.MyHero.Mana >= m)
                                         {
                                             if (bestdmg >= target.Health)
                                             {

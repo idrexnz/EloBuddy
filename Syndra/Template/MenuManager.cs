@@ -20,7 +20,7 @@ namespace Template
         {
             var AddonName = Champion.AddonName;
             var Author = Champion.Author;
-            AddonMenu = MainMenu.AddMenu(AddonName, AddonName + " by " + Author + " v1.0 ");
+            AddonMenu = MainMenu.AddMenu(AddonName, AddonName + " by " + Author + " v1.1 ");
             AddonMenu.AddLabel(AddonName + " made by " + Author);
 
             SubMenu["Prediction"] = AddonMenu.AddSubMenu("Prediction", "Prediction");
@@ -41,7 +41,7 @@ namespace Template
             SubMenu["Combo"].Add("E", new CheckBox("Use E", true));
             SubMenu["Combo"].Add("QE", new CheckBox("Use QE", true));
             SubMenu["Combo"].Add("WE", new CheckBox("Use WE", true));
-            SubMenu["Combo"].AddStringList("R", "Use R", new[] { "Never", "If killable", "If needed", "Always" }, 2);
+            SubMenu["Combo"].AddStringList("R", "Use R", new[] { "Never", "If killable", "If needed", "Always" }, 1);
             SubMenu["Combo"].Add("Zhonyas", new Slider("Use Zhonyas if HealthPercent <=", 10, 0, 100));
             SubMenu["Combo"].Add("Cooldown", new Slider("Cooldown on spells for R needed", 3, 0, 10));
 
@@ -87,7 +87,7 @@ namespace Template
             SubMenu["Drawings"].Add("Disable", new CheckBox("Disable all drawings", false));
             SubMenu["Drawings"].Add("Target", new CheckBox("Draw circle on target", true));
             SubMenu["Drawings"].Add("Killable", new CheckBox("Draw text if enemy is killable", true));
-            SubMenu["Drawings"].Add("E.Lines", new CheckBox("Draw E lines", true));
+            SubMenu["Drawings"].AddStringList("E.Lines", "Draw lines for E", new[] { "Never", "If will hit enemy", "Always"}, 1);
             SubMenu["Drawings"].Add("W.Object", new CheckBox("Draw circle on w object", true));
 
             SubMenu["Misc"] = AddonMenu.AddSubMenu("Misc", "Misc");

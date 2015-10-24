@@ -89,7 +89,7 @@ namespace LeeSin
                 {
                     var width = SpellManager.RKick.Width;//enemy.BoundingRadius;
                     var startpos = enemy.Position.To2D();
-                    var endpos = startpos + (startpos - Util.myHero.Position.To2D()).Normalized() * SpellManager.RKick.Range;
+                    var endpos = startpos + (startpos - Util.MyHero.Position.To2D()).Normalized() * SpellManager.RKick.Range;
                     List<Tuple<Vector2, float>> positions = new List<Tuple<Vector2, float>>();
                     SpellManager.RKick.SourcePosition = enemy.Position;
                     foreach (AIHeroClient enemy2 in EntityManager.Heroes.Enemies.Where(m => m.IsValidTarget(SpellManager.RKick.Range) && m.NetworkId != enemy.NetworkId))

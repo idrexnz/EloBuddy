@@ -23,10 +23,9 @@ namespace LeeSin
                 return Insec.Menu.GetKeyBindValue("Key");
             }
         }
-        public static float Extra_AA_Range = 120f;
         public static void Init()
         {
-            Game.OnUpdate += Game_OnTick;
+            Game.OnTick += Game_OnTick;
         }
         private static void Game_OnTick(EventArgs args)
         {
@@ -64,14 +63,6 @@ namespace LeeSin
                 Flee.Execute();
             }
 
-        }
-        public static bool IsInAutoAttackRange(this Obj_AI_Base source, Obj_AI_Base target)
-        {
-            if (Combo.IsActive || Harass.IsActive)
-            {
-                return source != null && target != null && source.IsValid && target.IsValid && !source.IsDead && !target.IsDead && Math.Pow(source.BoundingRadius + target.BoundingRadius + source.AttackRange + Extra_AA_Range, 2) >= Extensions.Distance(source, target, true);
-            }
-            return source != null && target != null && source.IsValid && target.IsValid && !source.IsDead && !target.IsDead && Math.Pow(source.BoundingRadius + target.BoundingRadius + source.AttackRange, 2) >= Extensions.Distance(source, target, true);
         }
         public static bool IsCombo
         {
