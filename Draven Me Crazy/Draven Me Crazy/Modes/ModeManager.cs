@@ -17,7 +17,7 @@ namespace Draven_Me_Crazy
         public static float Extra_AA_Range = 120f;
         public static void Init(EventArgs args)
         {
-            Game.OnUpdate += Game_OnUpdate;
+            Game.OnTick += Game_OnUpdate;
         }
 
         private static void Game_OnUpdate(EventArgs args)

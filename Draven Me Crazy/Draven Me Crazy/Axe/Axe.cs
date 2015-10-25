@@ -48,24 +48,12 @@ namespace Draven_Me_Crazy
                 return float.MaxValue;
             }
         }
-        public Vector3 CatchSource
-        {
-            get
-            {
-                if (this.IsFirst())
-                {
-                    return AxesManager.CatchSource;
-                }
-                return StartPosition;
-
-            }
-        }
         public bool SourceInRadius
         {
             get
             {
                 if (MissileIsValid || ReticleIsValid)
-                    return Extensions.Distance(CatchSource, EndPosition, true) < Math.Pow(AxesManager.CatchRadius, 2);
+                    return Extensions.Distance(AxesManager.CatchSource, EndPosition, true) <= Math.Pow(AxesManager.CatchRadius, 2);
                 return false;
             }
         }
@@ -89,7 +77,7 @@ namespace Draven_Me_Crazy
             get
             {
                 var TimeLefts = 0f;
-                foreach (Axe a1 in AxesManager.Axes.Where(m =>m.InTime && m.TimeLeft < TimeLeft))
+                foreach (Axe a1 in AxesManager.Axes.Where(m => m.InTime && m.TimeLeft < TimeLeft))
                 {
                     TimeLefts += a1.TimeLeft;
                 }
@@ -184,11 +172,11 @@ namespace Draven_Me_Crazy
         {
             get
             {
-                if (this.IsFirst())
+                if (!this.IsFirst() && this.AxeBefore() != null)
                 {
-                    return Util.MyHero.Position;
+                    return this.AxeBefore().EndPosition;
                 }
-                return this.AxeBefore().EndPosition;
+                return Util.MyHero.Position;
             }
         }
         public Vector3 EndPosition

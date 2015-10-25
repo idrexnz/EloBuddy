@@ -51,7 +51,7 @@ namespace Draven_Me_Crazy
         public static Vector3 CatchSource { get { return OrbwalkMode == 1 ? Util.MousePos : Util.MyHero.Position; } }
         public static void Init(EventArgs args)
         {
-            Game.OnUpdate += Game_OnUpdate;
+            Game.OnTick += Game_OnUpdate;
             GameObject.OnCreate += GameObject_OnCreate;
             GameObject.OnDelete += GameObject_OnDelete;
             Game.OnWndProc += Game_OnWndProc;
@@ -70,14 +70,14 @@ namespace Draven_Me_Crazy
         {
             get
             {
-                return Axes.Where(m => m.InTime).OrderBy(m => m.TimeLeft).FirstOrDefault();
+                return Axes.Where(m => m.InTime && !m.InTurret).OrderBy(m => m.TimeLeft).FirstOrDefault();
             }
         }
         public static Axe FirstAxeInRadius
         {
             get
             {
-                return Axes.Where(m => m.InTime && m.SourceInRadius).OrderBy(m => m.TimeLeft).FirstOrDefault();
+                return Axes.Where(m => m.InTime && !m.InTurret && m.SourceInRadius).OrderBy(m => m.TimeLeft).FirstOrDefault();
             }
         }
         public static bool IsFirst(this Axe a)
@@ -86,11 +86,11 @@ namespace Draven_Me_Crazy
         }
         public static Axe AxeAfter(this Axe a)
         {
-            return Axes.Where(m => m.InTime && m.TimeLeft > a.TimeLeft).OrderBy(m => m.TimeLeft).FirstOrDefault();
+            return Axes.Where(m => m.InTime && !m.InTurret && m.TimeLeft > a.TimeLeft).OrderBy(m => m.TimeLeft).FirstOrDefault();
         }
         public static Axe AxeBefore(this Axe a)
         {
-            return Axes.Where(m => m.InTime && m.TimeLeft < a.TimeLeft).OrderBy(m => m.TimeLeft).LastOrDefault();
+            return Axes.Where(m => m.InTime && !m.InTurret && m.TimeLeft < a.TimeLeft).OrderBy(m => m.TimeLeft).LastOrDefault();
         }
         private static void Game_OnUpdate(EventArgs args)
         {

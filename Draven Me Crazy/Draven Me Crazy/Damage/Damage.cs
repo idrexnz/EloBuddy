@@ -31,6 +31,8 @@ namespace Draven_Me_Crazy
             {
                 switch (slot)
                 {
+                    case SpellSlot.Q:
+                        return AxesManager.AxesCount * (Util.MyHero.GetSpellDamage(target, slot) + Util.MyHero.GetAutoAttackDamage(target, true));
                     case SpellSlot.W:
                         return Util.MyHero.GetAutoAttackDamage(target, true) * 2;
                     case SpellSlot.E:
@@ -76,7 +78,7 @@ namespace Draven_Me_Crazy
                 {
                     ComboDamage += Util.MyHero.GetSummonerSpellDamage(target, DamageLibrary.SummonerSpells.Smite);
                 }
-                ComboDamage += Util.MyHero.GetAutoAttackDamage(target, true);
+                ComboDamage += 1.5f * Util.MyHero.GetAutoAttackDamage(target, true);
             }
             ComboDamage = ComboDamage * Overkill;
             return new DamageResult(target, ComboDamage, ManaWasted);
