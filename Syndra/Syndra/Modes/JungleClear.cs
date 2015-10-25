@@ -10,7 +10,7 @@ using EloBuddy.SDK.Menu.Values;
 using EloBuddy.SDK.Rendering;
 using SharpDX;
 
-namespace Template
+namespace Syndra
 {
     public static class JungleClear
     {

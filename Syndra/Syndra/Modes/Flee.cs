@@ -12,7 +12,7 @@ using SharpDX;
 
 
 
-namespace Template
+namespace Syndra
 {
     public static class Flee
     {

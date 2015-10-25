@@ -2,7 +2,7 @@
 using EloBuddy;
 using EloBuddy.SDK.Events;
 
-namespace Template
+namespace Syndra
 {
     public static class Champion
     {

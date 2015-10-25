@@ -2,7 +2,7 @@
 using EloBuddy.SDK;
 
 
-namespace Template
+namespace Syndra
 {
     public static class TargetSelector
     {

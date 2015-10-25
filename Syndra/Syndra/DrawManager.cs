@@ -1,26 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using EloBuddy;
 using EloBuddy.SDK;
-using EloBuddy.SDK.Enumerations;
-using EloBuddy.SDK.Events;
 using EloBuddy.SDK.Menu;
-using EloBuddy.SDK.Menu.Values;
 using EloBuddy.SDK.Rendering;
 using SharpDX;
 
-namespace Template
+namespace Syndra
 {
     public static class DrawManager
     {
         public static Menu Menu
         {
-            get
-            {
-                return MenuManager.GetSubMenu("Drawings");
-            }
+            get { return MenuManager.GetSubMenu("Drawings"); }
         }
+
         public static void Init(EventArgs args)
         {
             Drawing.OnDraw += Drawing_OnDraw;
@@ -40,25 +34,24 @@ namespace Template
                 switch (Menu.GetSliderValue("E.Lines"))
                 {
                     case 1:
-                        foreach (Ball b in BallManager.Balls.Where(m => m.IsIdle && m.ObjectIsValid && m.E_IsOnRange))
+                        foreach (var b in from b in BallManager.Balls.Where(m => m.IsIdle && m.ObjectIsValid && m.EIsOnRange) from enemy in EntityManager.Heroes.Enemies.Where(b.E_WillHit) select b)
                         {
-                            foreach (AIHeroClient enemy in EntityManager.Heroes.Enemies.Where(m => b.E_WillHit(m)))
-                            {
-                                Drawing.DrawLine(b.Position.WorldToScreen(), b.E_EndPosition.WorldToScreen(), SpellManager.QE.Width, System.Drawing.Color.FromArgb(100, 255, 255, 255));
-                            }
+                            Drawing.DrawLine(b.Position.E_StartPosition().WorldToScreen(), b.EEndPosition.WorldToScreen(),
+                                SpellManager.QE.Width, System.Drawing.Color.FromArgb(100, 255, 255, 255));
                         }
                         break;
                     case 2:
-                        foreach (Ball b in BallManager.Balls.Where(m => m.IsIdle && m.ObjectIsValid && m.E_IsOnRange))
+                        foreach (var b in BallManager.Balls.Where(m => m.IsIdle && m.ObjectIsValid && m.EIsOnRange))
                         {
-                            Drawing.DrawLine(b.Position.WorldToScreen(), b.E_EndPosition.WorldToScreen(), SpellManager.QE.Width, System.Drawing.Color.FromArgb(100, 255, 255, 255));
+                            Drawing.DrawLine(b.Position.E_StartPosition().WorldToScreen(), b.EEndPosition.WorldToScreen(),
+                                SpellManager.QE.Width, System.Drawing.Color.FromArgb(100, 255, 255, 255));
                         }
                         break;
                 }
             }
-            if (Menu.GetCheckBoxValue("W.Object") && SpellManager.W_Object != null)
+            if (Menu.GetCheckBoxValue("W.Object") && SpellManager.WObject != null)
             {
-                Circle.Draw(Color.Blue, SpellManager.W_Width1, 1, SpellManager.W_Object.Position);
+                Circle.Draw(Color.Blue, SpellManager.W_Width1, 1, SpellManager.WObject.Position);
             }
             if (Menu.GetCheckBoxValue("Killable") && SpellSlot.R.IsReady())
             {
@@ -70,6 +63,23 @@ namespace Template
             if (Menu.GetCheckBoxValue("Harass.Toggle"))
             {
                 Drawing.DrawText(Util.MyHero.Position.WorldToScreen() - new Vector2(50, 0), System.Drawing.Color.White, "Harass Toggle: " + (Harass.Menu.GetKeyBindValue("Toggle") ? "ON": "OFF"), 15);
+            }
+            var color = new ColorBGRA(255, 255, 255, 100);
+            if (Menu.GetCheckBoxValue("Q") && SpellSlot.Q.IsReady())
+            {
+                Circle.Draw(color, SpellManager.Q.Range, Util.MyHero.Position);
+            }
+            if (Menu.GetCheckBoxValue("W") && SpellSlot.W.IsReady())
+            {
+                Circle.Draw(color, SpellManager.W.Range, Util.MyHero.Position);
+            }
+            if (Menu.GetCheckBoxValue("QE") && SpellSlot.E.IsReady())
+            {
+                Circle.Draw(color, SpellManager.QE.Range, Util.MyHero.Position);
+            }
+            if (Menu.GetCheckBoxValue("R") && SpellSlot.R.IsReady())
+            {
+                Circle.Draw(color, SpellManager.R.Range, Util.MyHero.Position);
             }
         }
     }

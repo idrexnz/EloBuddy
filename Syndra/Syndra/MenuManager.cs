@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EloBuddy;
 using EloBuddy.SDK;
-using EloBuddy.SDK.Enumerations;
-using EloBuddy.SDK.Events;
 using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
-using EloBuddy.SDK.Rendering;
-using SharpDX;
 
-namespace Template
+namespace Syndra
 {
     public static class MenuManager
     {
@@ -18,10 +13,10 @@ namespace Template
         public static Dictionary<string, Menu> SubMenu = new Dictionary<string, Menu>() { };
         public static void Init(EventArgs args)
         {
-            var AddonName = Champion.AddonName;
-            var Author = Champion.Author;
-            AddonMenu = MainMenu.AddMenu(AddonName, AddonName + " by " + Author + " v1.2 ");
-            AddonMenu.AddLabel(AddonName + " made by " + Author);
+            var addonName = Champion.AddonName;
+            var author = Champion.Author;
+            AddonMenu = MainMenu.AddMenu(addonName, addonName + " by " + author + " v1.2 ");
+            AddonMenu.AddLabel(addonName + " made by " + author);
 
             SubMenu["Prediction"] = AddonMenu.AddSubMenu("Prediction", "Prediction");
             SubMenu["Prediction"].AddGroupLabel("Q Settings");
@@ -86,6 +81,10 @@ namespace Template
 
             SubMenu["Drawings"] = AddonMenu.AddSubMenu("Drawings", "Drawings");
             SubMenu["Drawings"].Add("Disable", new CheckBox("Disable all drawings", false));
+            SubMenu["Drawings"].Add("Q", new CheckBox("Draw Q Range", true));
+            SubMenu["Drawings"].Add("W", new CheckBox("Draw W Range", false));
+            SubMenu["Drawings"].Add("QE", new CheckBox("Draw QE Range", true));
+            SubMenu["Drawings"].Add("R", new CheckBox("Draw R Range", false));
             SubMenu["Drawings"].Add("Target", new CheckBox("Draw circle on target", true));
             SubMenu["Drawings"].Add("Killable", new CheckBox("Draw text if enemy is killable", true));
             SubMenu["Drawings"].Add("W.Object", new CheckBox("Draw circle on w object", true));
@@ -100,7 +99,7 @@ namespace Template
             if (EntityManager.Heroes.Enemies.Count > 0)
             {
                 SubMenu["Misc"].AddGroupLabel("Don't use R on");
-                foreach (AIHeroClient enemy in EntityManager.Heroes.Enemies)
+                foreach (var enemy in EntityManager.Heroes.Enemies)
                 {
                     SubMenu["Misc"].Add("Dont.R." + enemy.ChampionName, new CheckBox(enemy.ChampionName, false));
                 }
@@ -116,56 +115,41 @@ namespace Template
         }
         public static bool GetCheckBoxValue(this Menu m, string s)
         {
-            if (m != null)
-                return m[s].Cast<CheckBox>().CurrentValue;
-            return false;
+            return m != null && m[s].Cast<CheckBox>().CurrentValue;
         }
+
         public static bool GetKeyBindValue(this Menu m, string s)
         {
-            if (m != null)
-                return m[s].Cast<KeyBind>().CurrentValue;
-            return false;
+            return m != null && m[s].Cast<KeyBind>().CurrentValue;
         }
-        public static void AddStringList(this Menu m, string uniqueID, string DisplayName, string[] values, int defaultValue)
+
+        public static void AddStringList(this Menu m, string uniqueId, string displayName, string[] values, int defaultValue)
         {
-            var mode = m.Add(uniqueID, new Slider(DisplayName, defaultValue, 0, values.Length - 1));
-            mode.DisplayName = DisplayName + ": " + values[mode.CurrentValue];
+            var mode = m.Add(uniqueId, new Slider(displayName, defaultValue, 0, values.Length - 1));
+            mode.DisplayName = displayName + ": " + values[mode.CurrentValue];
             mode.OnValueChange += delegate (ValueBase<int> sender, ValueBase<int>.ValueChangeArgs args)
             {
-                sender.DisplayName = DisplayName + ": " + values[args.NewValue];
+                sender.DisplayName = displayName + ": " + values[args.NewValue];
             };
         }
         public static Menu GetSubMenu(string s)
         {
-            foreach (KeyValuePair<string, Menu> t in SubMenu)
-            {
-                if (t.Key.Equals(s))
-                {
-                    return t.Value;
-                }
-            }
-            return null;
+            return (from t in SubMenu where t.Key.Equals(s) select t.Value).FirstOrDefault();
         }
+
         public static Menu MiscMenu
         {
-            get
-            {
-                return GetSubMenu("Misc");
-            }
+            get { return GetSubMenu("Misc"); }
         }
+
         public static Menu PredictionMenu
         {
-            get
-            {
-                return GetSubMenu("Prediction");
-            }
+            get { return GetSubMenu("Prediction"); }
         }
+
         public static Menu DrawingsMenu
         {
-            get
-            {
-                return GetSubMenu("Drawings");
-            }
+            get { return GetSubMenu("Drawings"); }
         }
     }
 }

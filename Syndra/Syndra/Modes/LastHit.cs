@@ -11,7 +11,7 @@ using EloBuddy.SDK.Rendering;
 using SharpDX;
 
 
-namespace Template
+namespace Syndra
 {
     public static class LastHit
     {

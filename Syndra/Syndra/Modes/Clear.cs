@@ -1,14 +1,12 @@
-﻿namespace Template
+﻿namespace Syndra
 {
     public static class Clear
     {
         public static bool IsActive
         {
-            get
-            {
-                return ModeManager.IsClear;
-            }
+            get { return ModeManager.IsClear; }
         }
+
         public static void Execute()
         {
             if (ModeManager.IsLaneClear)
