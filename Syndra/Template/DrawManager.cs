@@ -67,6 +67,10 @@ namespace Template
                     Drawing.DrawText(enemy.Position.WorldToScreen(), System.Drawing.Color.Red, "R KILLABLE", 15);
                 }
             }
+            if (Menu.GetCheckBoxValue("Harass.Toggle"))
+            {
+                Drawing.DrawText(Util.MyHero.Position.WorldToScreen() - new Vector2(50, 0), System.Drawing.Color.White, "Harass Toggle: " + (Harass.Menu.GetKeyBindValue("Toggle") ? "ON": "OFF"), 15);
+            }
         }
     }
 }

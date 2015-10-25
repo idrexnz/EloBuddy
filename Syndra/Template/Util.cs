@@ -10,7 +10,7 @@ namespace Template
 {
     public static class Util
     {
-        public static float Extra_AA_Range = 120f;
+        public static float ExtraAaRange = 120f;
         public static AIHeroClient MyHero { get { return ObjectManager.Player; } }
         public static Vector3 MousePos { get { return Game.CursorPos; } }
         public static bool IsValidAlly(this AttackableUnit unit, float range = float.MaxValue)
@@ -21,7 +21,7 @@ namespace Template
         {
             if (Combo.IsActive || Harass.IsActive)
             {
-                return source != null && target != null && source.IsValid && target.IsValid && !source.IsDead && !target.IsDead && Math.Pow(source.BoundingRadius + target.BoundingRadius + source.AttackRange + Extra_AA_Range, 2) >= Extensions.Distance(source, target, true);
+                return source != null && target != null && source.IsValid && target.IsValid && !source.IsDead && !target.IsDead && Math.Pow(source.BoundingRadius + target.BoundingRadius + source.AttackRange + ExtraAaRange, 2) >= Extensions.Distance(source, target, true);
             }
             return source != null && target != null && source.IsValid && target.IsValid && !source.IsDead && !target.IsDead && Math.Pow(source.BoundingRadius + target.BoundingRadius + source.AttackRange, 2) >= Extensions.Distance(source, target, true);
         }
@@ -29,7 +29,7 @@ namespace Template
         {
             if (unit != null && unit.IsValid && !unit.IsDead)
             {
-                var turret = EntityManager.Turrets.Enemies.Where(m => m.IsValidTarget() && Extensions.Distance(unit, m, true) <= Math.Pow(750f + unit.BoundingRadius, 2)).FirstOrDefault();
+                var turret = EntityManager.Turrets.Enemies.FirstOrDefault(m => m != null && m.Health > 0 && m.IsValid && Extensions.Distance(unit, m, true) <= Math.Pow(750f + 80, 2));
                 if (turret != null)
                 {
                     return true;

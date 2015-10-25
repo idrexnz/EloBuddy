@@ -44,8 +44,15 @@ namespace Template
             {
                 Flee.Execute();
             }
+            if (IsNone)
+            {
+                if (Harass.Menu.GetKeyBindValue("Toggle"))
+                {
+                    Harass.Execute();
+                }
+            }
         }
-        
+
         public static bool IsCombo
         {
             get

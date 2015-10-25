@@ -38,6 +38,11 @@ namespace Template
                 var count = SpellManager.IsW2 ? (Menu.GetSliderValue("W") - 1) : Menu.GetSliderValue("W");
                 SpellManager.CastW(SpellManager.W.LaneClear(count, false));
             }
+            else if (SpellManager.IsW2)
+            {
+                var count = SpellManager.IsW2 ? (Menu.GetSliderValue("W") - 1) : Menu.GetSliderValue("W");
+                SpellManager.CastW(SpellManager.W.LaneClear(count, false));
+            }
         }
     }
 }

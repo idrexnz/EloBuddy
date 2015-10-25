@@ -20,12 +20,12 @@ namespace Template
         {
             var AddonName = Champion.AddonName;
             var Author = Champion.Author;
-            AddonMenu = MainMenu.AddMenu(AddonName, AddonName + " by " + Author + " v1.1 ");
+            AddonMenu = MainMenu.AddMenu(AddonName, AddonName + " by " + Author + " v1.2 ");
             AddonMenu.AddLabel(AddonName + " made by " + Author);
 
             SubMenu["Prediction"] = AddonMenu.AddSubMenu("Prediction", "Prediction");
             SubMenu["Prediction"].AddGroupLabel("Q Settings");
-            SubMenu["Prediction"].Add("QCombo", new Slider("Combo HitChancePercent", 60, 0, 100));
+            SubMenu["Prediction"].Add("QCombo", new Slider("Combo HitChancePercent", 65, 0, 100));
             SubMenu["Prediction"].Add("QHarass", new Slider("Harass HitChancePercent", 70, 0, 100));
             SubMenu["Prediction"].AddGroupLabel("W Settings");
             SubMenu["Prediction"].Add("WCombo", new Slider("Combo HitChancePercent", 60, 0, 100));
@@ -46,6 +46,7 @@ namespace Template
             SubMenu["Combo"].Add("Cooldown", new Slider("Cooldown on spells for R needed", 3, 0, 10));
 
             SubMenu["Harass"] = AddonMenu.AddSubMenu("Harass", "Harass");
+            SubMenu["Harass"].Add("Toggle", new KeyBind("Harass toggle", false, KeyBind.BindTypes.PressToggle, 'K'));
             SubMenu["Harass"].Add("Q", new CheckBox("Use Q", true));
             SubMenu["Harass"].Add("W", new CheckBox("Use W", false));
             SubMenu["Harass"].Add("E", new CheckBox("Use E", false));
@@ -87,8 +88,9 @@ namespace Template
             SubMenu["Drawings"].Add("Disable", new CheckBox("Disable all drawings", false));
             SubMenu["Drawings"].Add("Target", new CheckBox("Draw circle on target", true));
             SubMenu["Drawings"].Add("Killable", new CheckBox("Draw text if enemy is killable", true));
-            SubMenu["Drawings"].AddStringList("E.Lines", "Draw lines for E", new[] { "Never", "If will hit enemy", "Always"}, 1);
             SubMenu["Drawings"].Add("W.Object", new CheckBox("Draw circle on w object", true));
+            SubMenu["Drawings"].Add("Harass.Toggle", new CheckBox("Draw text for harass toggle status", true));
+            SubMenu["Drawings"].AddStringList("E.Lines", "Draw lines for E", new[] { "Never", "If will hit enemy", "Always" }, 1);
 
             SubMenu["Misc"] = AddonMenu.AddSubMenu("Misc", "Misc");
             SubMenu["Misc"].Add("GapCloser", new CheckBox("Use QE/WE to Interrupt GapClosers", true));

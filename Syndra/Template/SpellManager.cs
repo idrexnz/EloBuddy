@@ -163,11 +163,19 @@ namespace Template
 
         private static void Game_OnUpdate(EventArgs args)
         {
-            W.Width = W_Width1;
-            Q.Width = Q_Width1;
+            Q = new Spell.Skillshot(SpellSlot.Q, 800, SkillShotType.Circular, 620, int.MaxValue, 180)
+            {
+                AllowedCollisionCount = int.MaxValue
+            };
+            W = new Spell.Skillshot(SpellSlot.W, 950, SkillShotType.Circular, 0, 1450, 210)
+            {
+                AllowedCollisionCount = int.MaxValue
+            };
             QE = new Spell.Skillshot(SpellSlot.E, 1200 - (uint)MenuManager.MiscMenu.GetSliderValue("QE.Range"),
                 SkillShotType.Circular, 0, 2000, 60)
-            { AllowedCollisionCount = int.MaxValue };
+            {
+                AllowedCollisionCount = int.MaxValue
+            };
         }
 
         private static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
@@ -226,7 +234,10 @@ namespace Template
             {
                 if (target is AIHeroClient)
                 {
-                    Q.Width = Q_Width2;
+                    Q = new Spell.Skillshot(SpellSlot.Q, 800, SkillShotType.Circular, 620, int.MaxValue, Q_Width2)
+                    {
+                        AllowedCollisionCount = int.MaxValue
+                    };
                 }
                 var pred = Q.GetPrediction(target);
                 if (pred.HitChancePercent >= Q.Slot.HitChancePercent())
@@ -246,14 +257,17 @@ namespace Template
                 {
                     if (target is AIHeroClient)
                     {
-                        W.Width = W_Width2;
+                        W = new Spell.Skillshot(SpellSlot.W, 950, SkillShotType.Circular, 0, 1450, W_Width2)
+                        {
+                            AllowedCollisionCount = int.MaxValue
+                        };
                     }
                     if (pred.HitChancePercent >= W.Slot.HitChancePercent())
                     {
                         Util.MyHero.Spellbook.CastSpell(W.Slot, pred.CastPosition);
                     }
                 }
-                else if (pred.HitChancePercent >= W.Slot.HitChancePercent()/2)
+                else if (pred.HitChancePercent >= W.Slot.HitChancePercent() / 2)
                 {
                     Obj_AI_Base best = null;
                     if (best == null)
@@ -330,7 +344,7 @@ namespace Template
                         target.ServerPosition.To2D().Distance(info.SegmentPoint, true) <=
                         Math.Pow(1.8f * (QE.Width + target.BoundingRadius), 2))
                     {
-                        QE.Speed = Util.MyHero.Distance(target, true) >= Util.MyHero.Distance(target, true)
+                        QE.Speed = Util.MyHero.Distance(target, true) >= Util.MyHero.Distance(position, true)
                             ? QE_Speed
                             : int.MaxValue;
                         QE.CastDelay = E.CastDelay +
@@ -345,7 +359,7 @@ namespace Template
                             var info2 = pred.CastPosition.To2D().ProjectOn(startPosition, endPosition);
                             if (info2.IsOnSegment &&
                                 info2.SegmentPoint.Distance(pred.CastPosition.To2D(), true) <=
-                                Math.Pow((QE.Width + target.BoundingRadius) * 4 / 4, 2))
+                                Math.Pow((QE.Width + target.BoundingRadius) * 0.8f, 2))
                             {
                                 Util.MyHero.Spellbook.CastSpell(QE.Slot, pred.CastPosition);
                             }
@@ -369,21 +383,27 @@ namespace Template
                             QE.Speed = int.MaxValue;
                             QE.SourcePosition = Util.MyHero.Position;
                             var pred1 = QE.GetPrediction(target);
-                            if (pred1.HitChancePercent >= 0)
+                            if (pred1.HitChancePercent >= 0 && Extensions.Distance(pred1.CastPosition, Util.MyHero, true) <= Math.Pow(QE.Range, 2))
                             {
                                 QE.Speed = QE_Speed;
-                                QE.SourcePosition = Util.MyHero.Position +
+                                var startPosition = Util.MyHero.Position +
                                                     (pred1.CastPosition - Util.MyHero.Position).Normalized() *
                                                     (E.Range + E_ExtraWidth);
+                                QE.SourcePosition = startPosition;
                                 QE.CastDelay = Q_CastDelay2 + E.CastDelay +
-                                               1000 * (int)(Util.MyHero.Distance(QE.SourcePosition.Value) / E.Speed);
+                                               1000 * (int)(Util.MyHero.Distance(startPosition) / E.Speed);
+                                var endPosition = Util.MyHero.Position.To2D() +
+                                                  (startPosition - Util.MyHero.Position).To2D().Normalized() *
+                                                  ((Util.MyHero.Distance(startPosition, true) >= Math.Pow(200, 2)) ? QE.Range : 1000);
                                 var pred2 = QE.GetPrediction(target);
-                                if (pred2.HitChancePercent >= QE.Slot.HitChancePercent())
+                                var info = pred2.CastPosition.To2D()
+                                    .ProjectOn(startPosition.To2D(), endPosition);
+                                if (pred2.HitChancePercent >= QE.Slot.HitChancePercent() && Extensions.Distance(pred2.CastPosition, Util.MyHero, true) <= Math.Pow(QE.Range, 2) && info.IsOnSegment && pred2.CastPosition.To2D().Distance(info.SegmentPoint, true) <= Math.Pow(1.8f * (QE.Width + target.BoundingRadius), 2))
                                 {
-                                    var startPosition = Util.MyHero.Position +
+                                    var startPosition2 = Util.MyHero.Position +
                                                         (pred2.CastPosition - Util.MyHero.Position).Normalized() *
                                                         (E.Range + E_ExtraWidth);
-                                    Util.MyHero.Spellbook.CastSpell(Q.Slot, startPosition);
+                                    Util.MyHero.Spellbook.CastSpell(Q.Slot, startPosition2);
                                     Combo_QE = Game.Time;
                                 }
                             }
@@ -403,12 +423,12 @@ namespace Template
                         }
                     }
                 }
-                else if (Game.Time - Combo_QE <= 1.5f * Q.CastDelay / 1000)
+                else if (Game.Time - Combo_QE <= 2f * Q.CastDelay / 1000f)
                 {
-                    var timeToArriveQ = Q_CastDelay2 / 1000 - (Game.Time - Q_LastCastTime);
+                    float timeToArriveQ = Q_CastDelay2 / 1000f - (Game.Time - Q_LastCastTime);
                     if (timeToArriveQ >= 0)
                     {
-                        if (timeToArriveQ <= Util.MyHero.Distance(Q_EndPosition) / E.Speed + E_CastDelay2 / 1000)
+                        if (timeToArriveQ <= (Util.MyHero.Distance(Q_EndPosition) / E.Speed) + E_CastDelay2 / 1000f)
                         {
                             CastE2(target, Q_EndPosition);
                         }
@@ -447,7 +467,7 @@ namespace Template
                             QE.Speed = W.Speed;
                             QE.SourcePosition = Util.MyHero.Position;
                             var pred = QE.GetPrediction(target);
-                            if (pred.HitChancePercent >= 0)
+                            if (pred.HitChancePercent >= 0 && Extensions.Distance(pred.CastPosition, Util.MyHero, true) <= Math.Pow(QE.Range, 2))
                             {
                                 QE.SourcePosition = Util.MyHero.Position +
                                                     (pred.CastPosition - Util.MyHero.Position).Normalized() *
@@ -458,7 +478,7 @@ namespace Template
                                                    (Util.MyHero.Distance(pred.CastPosition) / W.Speed +
                                                     Util.MyHero.Distance(QE.SourcePosition.Value) / E.Speed);
                                 var pred2 = QE.GetPrediction(target);
-                                if (pred2.HitChancePercent >= QE.Slot.HitChancePercent())
+                                if (pred2.HitChancePercent >= QE.Slot.HitChancePercent() && Extensions.Distance(pred2.CastPosition, Util.MyHero, true) <= Math.Pow(QE.Range, 2))
                                 {
                                     var startPos = Util.MyHero.Position +
                                                    (pred2.CastPosition - Util.MyHero.Position).Normalized() *
@@ -472,7 +492,10 @@ namespace Template
                         {
                             if (target is AIHeroClient)
                             {
-                                W.Width = W_Width2;
+                                W = new Spell.Skillshot(SpellSlot.W, 950, SkillShotType.Circular, 0, 1450, W_Width2)
+                                {
+                                    AllowedCollisionCount = int.MaxValue
+                                };
                             }
                             var pred = W.GetPrediction(target);
                             if (pred.HitChancePercent >= SpellSlot.W.HitChancePercent() / 2)
@@ -484,13 +507,13 @@ namespace Template
                     }
                 }
                 else if (_WE_Object.IsValidAlly() && _WE_Object.IsBall() &&
-                         Game.Time - Combo_WE <= 1.5f * (W_CastDelay2 / 1000 + _WE_Object.Distance(W_EndPosition) / W_Speed2))
+                         Game.Time - Combo_WE <= 2.0f * (W_CastDelay2 / 1000f + _WE_Object.Distance(W_EndPosition) / W_Speed2))
                 {
-                    var timeToArriveW = W_CastDelay2 / 1000 + _WE_Object.Distance(W_EndPosition) / W_Speed2 -
+                    float timeToArriveW = W_CastDelay2 / 1000f + (_WE_Object.Distance(W_EndPosition) / W_Speed2) -
                                         (Game.Time - W_LastCastTime);
                     if (timeToArriveW >= 0)
                     {
-                        if (timeToArriveW <= W_EndPosition.Distance(Util.MyHero) / E.Speed + E_CastDelay2 / 1000)
+                        if (timeToArriveW <= (W_EndPosition.Distance(Util.MyHero) / E.Speed) + E_CastDelay2 / 1000f)
                         {
                             CastE2(target, W_EndPosition);
                         }

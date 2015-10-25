@@ -8,7 +8,6 @@ namespace Template
     {
         public static string Author = "iCreative";
         public static string AddonName = "Limitless Potential";
-        //Add Killable text
         static void Main(string[] args)
         {
             Loading.OnLoadingComplete += Loading_OnLoadingComplete;

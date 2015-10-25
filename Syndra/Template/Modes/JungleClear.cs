@@ -34,6 +34,10 @@ namespace Template
             if (Util.MyHero.ManaPercent >= Menu.GetSliderValue("Mana"))
             {
                 var minion = SpellManager.W.JungleClear(false);
+                if (minion == null)
+                {
+                    minion = SpellManager.Q.JungleClear(false);
+                }
                 if (Menu.GetCheckBoxValue("E")) { SpellManager.CastE(minion); }
                 if (Menu.GetCheckBoxValue("W")) { SpellManager.CastW(minion); }
                 if (Menu.GetCheckBoxValue("Q")) { SpellManager.CastQ(minion); }
