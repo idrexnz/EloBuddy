@@ -62,7 +62,7 @@ namespace Draven_Me_Crazy
 
         private static void AddReticleToAxe(GameObject obj)
         {
-            var a = Axes.Where(m => m.MissileIsValid && m.Reticle == null).OrderBy(m => Extensions.Distance(obj, m.Missile.EndPosition, true)).FirstOrDefault();
+            var a = Axes.Where(m => m.MissileIsValid && m.Reticle == null).OrderBy(m => obj.Distance(m.Missile.EndPosition, true)).FirstOrDefault();
             if (a != null)
             {
                 a.AddReticle(obj);
@@ -97,11 +97,11 @@ namespace Draven_Me_Crazy
         private static void Game_OnUpdate(EventArgs args)
         {
             Axes.RemoveAll(a => a.Reticle != null && (!a.Reticle.IsValid || !a.InTime));
-            bool CanMove = true;
-            bool CanAttack = true;
+            var CanMove = true;
+            var CanAttack = true;
             if (CanCatch)
             {
-                foreach (Axe a in Axes)
+                foreach (var a in Axes)
                 {
                     if (!a.CanOrbwalkWithUserDelay)
                     {
@@ -117,18 +117,27 @@ namespace Draven_Me_Crazy
             Orbwalker.DisableMovement = !CanMove;
             if (!CanMove)
             {
-                var BestAxe = FirstAxeInRadius;
-                if (BestAxe != null)
+                var bestAxe = FirstAxeInRadius;
+                if (bestAxe != null && !bestAxe.HeroInReticle)
                 {
-                    if (Orbwalker.CanMove && !MoveWillChangeReticleEndPosition)
+                    if (Orbwalker.CanMove)
                     {
-                        Orbwalker.DisableMovement = false;
-                        Orbwalker.MoveTo(BestAxe.EndPosition);
-                        Orbwalker.DisableMovement = true;
-                        if (!BestAxe.MoveSent)
+                        if (!MoveWillChangeReticleEndPosition)
                         {
-                            Player.IssueOrder(GameObjectOrder.MoveTo, BestAxe.EndPosition);
-                            BestAxe.MoveSent = true;
+                            Orbwalker.DisableMovement = false;
+                            Orbwalker.MoveTo(bestAxe.EndPosition);
+                            Orbwalker.DisableMovement = true;
+                            if (!bestAxe.MoveSent)
+                            {
+                                Player.IssueOrder(GameObjectOrder.MoveTo, bestAxe.EndPosition);
+                                bestAxe.MoveSent = true;
+                            }
+                        }
+                        else
+                        {
+                            Orbwalker.DisableMovement = false;
+                            Orbwalker.MoveTo(Util.MousePos);
+                            Orbwalker.DisableMovement = true;
                         }
                     }
                 }
@@ -139,20 +148,19 @@ namespace Draven_Me_Crazy
         {
             get
             {
-                return AaMissiles.Any() && AaMissiles.Where(m => m.Target.IsValid).Any(missile => missile.Position.Distance(missile.Target)/missile.StartPosition.Distance(missile.Target) <= 0.2f);
+                return AaMissiles.Any() && AaMissiles.Any(missile => missile.Target != null && missile.IsValid && missile.Position.Distance(missile.Target) / missile.StartPosition.Distance(missile.Target) <= 0.2f);
             }
         }
 
         private static void Game_OnWndProc(WndEventArgs args)
         {
-            if (args.Msg == (uint)WindowMessages.LeftButtonDoubleClick && Menu.GetCheckBoxValue("Click"))
+            if (args.Msg != (uint)WindowMessages.LeftButtonDoubleClick || !Menu.GetCheckBoxValue("Click")) return;
+            if (FirstAxeInRadius != null)
             {
-                if (FirstAxeInRadius != null)
-                {
-                    Axes.Remove(FirstAxeInRadius);
-                }
+                Axes.Remove(FirstAxeInRadius);
             }
         }
+
         private static void GameObject_OnCreate(GameObject sender, EventArgs args)
         {
             if (sender is MissileClient)
