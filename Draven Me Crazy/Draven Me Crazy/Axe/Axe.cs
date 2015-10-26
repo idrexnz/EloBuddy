@@ -123,7 +123,7 @@ namespace Draven_Me_Crazy
         {
             get
             {
-                return Extensions.Distance(Util.MyHero, AxeCatchPositionFromHero);
+                return Util.MyHero.Distance(AxeCatchPositionFromHero);
             }
         }
         public Vector3 AxeCatchPositionFromHero

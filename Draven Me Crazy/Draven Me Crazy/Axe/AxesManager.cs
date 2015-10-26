@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EloBuddy;
 using EloBuddy.SDK;
+using EloBuddy.SDK.Constants;
 using EloBuddy.SDK.Enumerations;
 using EloBuddy.SDK.Events;
 using EloBuddy.SDK.Menu;
@@ -14,6 +15,7 @@ namespace Draven_Me_Crazy
     public static class AxesManager
     {
         public static List<Axe> Axes = new List<Axe>();
+        public static List<MissileClient> AaMissiles = new List<MissileClient>();
         public static Menu Menu
         {
             get
@@ -118,11 +120,11 @@ namespace Draven_Me_Crazy
                 var BestAxe = FirstAxeInRadius;
                 if (BestAxe != null)
                 {
-                    Orbwalker.DisableMovement = false;
-                    Orbwalker.MoveTo(BestAxe.EndPosition);
-                    Orbwalker.DisableMovement = true;
-                    if (Orbwalker.CanMove)
+                    if (Orbwalker.CanMove && !MoveWillChangeReticleEndPosition)
                     {
+                        Orbwalker.DisableMovement = false;
+                        Orbwalker.MoveTo(BestAxe.EndPosition);
+                        Orbwalker.DisableMovement = true;
                         if (!BestAxe.MoveSent)
                         {
                             Player.IssueOrder(GameObjectOrder.MoveTo, BestAxe.EndPosition);
@@ -130,6 +132,14 @@ namespace Draven_Me_Crazy
                         }
                     }
                 }
+            }
+        }
+
+        public static bool MoveWillChangeReticleEndPosition
+        {
+            get
+            {
+                return AaMissiles.Any() && AaMissiles.Where(m => m.Target.IsValid).Any(missile => missile.Position.Distance(missile.Target)/missile.StartPosition.Distance(missile.Target) <= 0.2f);
             }
         }
 
@@ -151,7 +161,11 @@ namespace Draven_Me_Crazy
                 if (missile.SpellCaster.IsMe)
                 {
                     var name = missile.SData.Name.ToLower();
-                    if (name.Equals("dravenspinningreturncatch") || name.Equals("dravenspinningreturnleftaxe"))
+                    if (name.Contains("dravenspinningattack"))
+                    {
+                        AaMissiles.Add(missile);
+                    }
+                    else if (name.Equals("dravenspinningreturncatch") || name.Equals("dravenspinningreturnleftaxe"))
                     {
                         Axes.Add(new Axe(missile));
                     }
@@ -172,7 +186,19 @@ namespace Draven_Me_Crazy
 
         private static void GameObject_OnDelete(GameObject sender, EventArgs args)
         {
-            if (sender is Obj_GeneralParticleEmitter)
+            if (sender is MissileClient)
+            {
+                var missile = sender as MissileClient;
+                if (missile.SpellCaster.IsMe)
+                {
+                    var name = missile.SData.Name.ToLower();
+                    if (name.Contains("dravenspinningattack"))
+                    {
+                        AaMissiles.RemoveAll(m => m.NetworkId == sender.NetworkId);
+                    }
+                }
+            }
+            else if (sender is Obj_GeneralParticleEmitter)
             {
                 var name = sender.Name.ToLower();
                 if (name.Contains(Util.MyHero.ChampionName.ToLower()) && name.Contains("reticle"))

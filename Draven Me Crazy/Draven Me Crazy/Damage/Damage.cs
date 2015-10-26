@@ -17,8 +17,8 @@ namespace Draven_Me_Crazy
     {
 
         public static float RefreshTime = 0.4f;
-        static Dictionary<int, DamageResult> PredictedDamage = new Dictionary<int, DamageResult>() { };
-        static float Overkill
+        private static Dictionary<int, DamageResult> PredictedDamage = new Dictionary<int, DamageResult>() { };
+        public static float Overkill
         {
             get
             {
