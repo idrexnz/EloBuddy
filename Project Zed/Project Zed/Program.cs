@@ -45,44 +45,6 @@ namespace Project_Zed
         {
             get { return myHero.Spellbook.GetSpell(R.Slot).SData.Name.ToLower() != "zedr2"; }
         }
-        /*
-        static bool Combo1Pressed, Combo2Pressed, Harass1Pressed, Harass2Pressed = false;
-        static int HarassType
-        {
-            get
-            {
-                if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass))
-                {
-                    if (Harass1Pressed)
-                    {
-                        return 1;
-                    }
-                    else if (Harass2Pressed)
-                    {
-                        return 2;
-                    }
-                }
-                return -1;
-            }
-        }
-        static int ComboType
-        {
-            get
-            {
-                if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
-                {
-                    if (Combo1Pressed)
-                    {
-                        return 1;
-                    }
-                    else if (Combo2Pressed)
-                    {
-                        return 2;
-                    }
-                }
-                return -1;
-            }
-        }*/
         static int TS_Range
         {
             get
@@ -226,6 +188,7 @@ namespace Project_Zed
             }
 
             SubMenu["Harass"] = menu.AddSubMenu("Harass", "Harass");
+            SubMenu["Harass"].Add("Harass2.Key", new KeyBind("Harass 2 Key", false, KeyBind.BindTypes.HoldActive, 'S'));
             SubMenu["Harass"].Add("Collision", new CheckBox("Check collision with Q", false));
             SubMenu["Harass"].Add("SwapGapclose", new CheckBox("Use W2 if target is killable", true));
             SubMenu["Harass"].AddGroupLabel("Harass 1");
@@ -306,19 +269,9 @@ namespace Project_Zed
 
         private static void Obj_AI_Base_OnPlayAnimation(Obj_AI_Base sender, GameObjectPlayAnimationEventArgs args)
         {
-            if (args.Animation.ToLower().Contains("death"))
-            {
-                if (Shadows.Count > 0)
-                {
-                    foreach (Obj_AI_Minion o in Shadows)
-                    {
-                        if (o.NetworkId == sender.NetworkId)
-                        {
-                            Shadows.Remove(o);
-                        }
-                    }
-                }
-            }
+            if (!args.Animation.ToLower().Contains("death")) return;
+            if (!Shadows.Any()) return;
+            Shadows.RemoveAll(o => o.NetworkId == sender.NetworkId);
         }
 
         private static void OnWndProc(WndEventArgs args)
@@ -393,16 +346,15 @@ namespace Project_Zed
             }
             else if (IsHarass)
             {
-                Harass();
-                /*
-                if (HarassType == 1)
+                if (GetKeyBind(SubMenu["Harass"], "Harass2.Key"))
+                {
+                    Orbwalker.MoveTo(mousePos);
+                    Harass2();
+                }
+                else
                 {
                     Harass();
                 }
-                else if (HarassType == 2)
-                {
-                    Harass2();
-                }*/
             }
             else if (IsClear)
             {
@@ -419,7 +371,6 @@ namespace Project_Zed
             {
                 LastHit();
             }
-
             if (IsFlee)
             {
                 Flee();
@@ -528,11 +479,11 @@ namespace Project_Zed
                         var min = Math.Min(Math.Min(wShadowDistance, rShadowDistance), heroDistance);
                         if (min <= 500 && min < heroDistance)
                         {
-                            if (min == wShadowDistance)
+                            if (Math.Abs(min - wShadowDistance) < float.Epsilon)
                             {
                                 myHero.Spellbook.CastSpell(W.Slot);
                             }
-                            else if (min == rShadowDistance)
+                            else if (Math.Abs(min - rShadowDistance) < float.Epsilon)
                             {
                                 myHero.Spellbook.CastSpell(R.Slot);
                             }
@@ -644,7 +595,7 @@ namespace Project_Zed
             if (myHero.ManaPercent >= SubMenu["JungleClear"]["Mana"].Cast<Slider>().CurrentValue)
             {
                 var jungleminions = EntityManager.MinionsAndMonsters.GetJungleMonsters(myHero.Position, 1000f);
-                if (jungleminions.Count() > 0)
+                if (jungleminions.Any())
                 {
                     foreach (Obj_AI_Base minion in jungleminions)
                     {
@@ -667,11 +618,11 @@ namespace Project_Zed
                 var wShadowDistance = wShadow != null ? Extensions.Distance(myHero, wShadow) : 999999f;
                 var rShadowDistance = rShadow != null ? Extensions.Distance(myHero, rShadow) : 999999f;
                 var min = Math.Min(Math.Min(rShadowDistance, wShadowDistance), heroDistance);
-                if (min == heroDistance)
+                if (Math.Abs(min - heroDistance) < float.Epsilon)
                 {
                     Q.SourcePosition = myHero.Position;
                 }
-                else if (min == rShadowDistance)
+                else if (Math.Abs(min - rShadowDistance) < float.Epsilon)
                 {
                     Q.SourcePosition = rShadow.Position;
                 }
@@ -698,7 +649,7 @@ namespace Project_Zed
                 if (r.HitChancePercent >= 50 && Game.Time - _W.LastSentTime > 0.25f)
                 {
                     _W.LastSentTime = Game.Time;
-                    var wPos = Vector3.Zero;
+                    Vector3 wPos;
                     if (rShadow != null)
                     {
                         wPos = myHero.Position + (r.CastPosition - rShadow.Position).Normalized() * 550;
@@ -752,50 +703,48 @@ namespace Project_Zed
         {
             if (s.IsReady())
             {
-                var enemyminions = EntityManager.MinionsAndMonsters.GetLaneMinions(EntityManager.UnitTeam.Enemy, myHero.Position, s.Range + s.Width, true).Where(o => o.Health <= 2.0f * Damage(o, s.Slot));
-                if (enemyminions.Count() > 0)
+                var enemyminions = EntityManager.MinionsAndMonsters.GetLaneMinions(EntityManager.UnitTeam.Enemy, myHero.Position, s.Range + s.Width, true).Where(o => o.IsValidTarget() && o.Health <= 2.0f * Damage(o, s.Slot));
+                if (enemyminions.Any())
                 {
                     foreach (Obj_AI_Base minion in enemyminions)
                     {
                         bool CanCalculate = false;
-                        if (minion.IsValidTarget())
+                        if (!Orbwalker.CanAutoAttack)
                         {
-                            if (!Orbwalker.CanAutoAttack)
+                            if (Orbwalker.CanMove && Orbwalker.LastTarget != null && Orbwalker.LastTarget.NetworkId != minion.NetworkId)
                             {
-                                if (Orbwalker.CanMove && Orbwalker.LastTarget != null && Orbwalker.LastTarget.NetworkId != minion.NetworkId)
-                                {
-                                    CanCalculate = true;
-                                }
+                                CanCalculate = true;
+                            }
+                        }
+                        else
+                        {
+                            if (myHero.GetAutoAttackRange(minion) <= Extensions.Distance(myHero, minion))
+                            {
+                                CanCalculate = true;
                             }
                             else
                             {
-                                if (myHero.GetAutoAttackRange(minion) <= Extensions.Distance(myHero, minion))
+                                var speed = myHero.BasicAttack.MissileSpeed;
+                                var time = (int)(1000 * Extensions.Distance(myHero, minion) / speed + myHero.AttackCastDelay * 1000 + Game.Ping - 100);
+                                var predHealth = Prediction.Health.GetPrediction(minion, time);
+                                if (predHealth <= 0)
                                 {
                                     CanCalculate = true;
                                 }
-                                else
+                                /**
+                                if (!Orbwalker.CanBeLastHitted(minion))
                                 {
-                                    var speed = myHero.BasicAttack.MissileSpeed;
-                                    var time = (int)(1000 * Extensions.Distance(myHero, minion) / speed + myHero.AttackCastDelay * 1000 + Game.Ping - 100);
-                                    var predHealth = Prediction.Health.GetPrediction(minion, time);
-                                    if (predHealth <= 0)
-                                    {
-                                        CanCalculate = true;
-                                    }
-                                    /**
-                                    if (!Orbwalker.CanBeLastHitted(minion))
-                                    {
-                                        CanCalculate = true;
-                                    }**/
-                                }
+                                    CanCalculate = true;
+                                }**/
                             }
                         }
                         if (CanCalculate)
                         {
                             var dmg = Damage(minion, s.Slot);
-                            var time = (int)(1000 * Extensions.Distance(s.SourcePosition.Value, minion) / s.Speed + s.CastDelay - 70);
+                            var source = s.SourcePosition ?? myHero.Position;
+                            var time = (int)(1000 * source.Distance(minion) / s.Speed + s.CastDelay - 70);
                             var predHealth = Prediction.Health.GetPrediction(minion, time);
-                            if (time > 0 && predHealth == minion.Health) { return; }
+                            if (time > 0 && Math.Abs(predHealth - minion.Health) < float.Epsilon) { return; }
                             if (dmg > predHealth && predHealth > 0)
                             {
                                 CastQ(minion);
@@ -809,7 +758,7 @@ namespace Project_Zed
         {
             if (sender is Obj_AI_Minion)
             {
-                if (sender.Name.ToLower().Equals("shadow") && sender.Team == myHero.Team)
+                if (sender.Team == myHero.Team && sender.Name.ToLower().Equals("shadow"))
                 {
                     var s = sender as Obj_AI_Minion;
                     Shadows.Add(s);
@@ -839,13 +788,9 @@ namespace Project_Zed
         {
             if (sender is Obj_AI_Minion)
             {
-                if (sender.Name.ToLower().Equals("shadow") && sender.Team == myHero.Team)
+                if (sender.Team == myHero.Team && sender.Name.ToLower().Equals("shadow"))
                 {
-                    var s2 = Shadows.Where(m => m.NetworkId == sender.NetworkId).FirstOrDefault();
-                    if (s2 != null)
-                    {
-                        Shadows.Remove(s2);
-                    }
+                    Shadows.RemoveAll(m => m.NetworkId == sender.NetworkId);
                 }
             }
             if (sender is Obj_GeneralParticleEmitter && sender.Name.ToLower().Contains(myHero.ChampionName.ToLower()) && sender.Name.ToLower().Contains("base_r") && sender.Name.ToLower().Contains("buf_tell"))
@@ -876,7 +821,7 @@ namespace Project_Zed
         {
             if (sender.IsMe)
             {
-                if (args.SData.Name.ToLower() == myHero.Spellbook.GetSpell(SpellSlot.W).SData.Name.ToLower())
+                if (args.Slot == SpellSlot.W)
                 {
                     if (args.SData.Name.ToLower() == "zedw2")
                     {
@@ -887,22 +832,20 @@ namespace Project_Zed
                         var pos = args.End;
                         if (IsWall(pos))
                         {
-                            for (float i = Extensions.Distance(myHero, args.End); i > 0; i = i - 10)
+                            for (var i = myHero.Distance(args.End); i > 0; i = i - 10)
                             {
                                 var notwall = myHero.Position + (pos - myHero.Position).Normalized() * i;
-                                if (!IsWall(notwall))
-                                {
-                                    pos = notwall;
-                                    break;
-                                }
+                                if (IsWall(notwall)) continue;
+                                pos = notwall;
+                                break;
                             }
                         }
                         _W.End = pos;
                         _W.LastCastTime = Game.Time;
-                        Core.DelayAction(() => ResetW(), (int)(Extensions.Distance(myHero, _W.End) / W.Speed + 6) * 1000);
+                        Core.DelayAction(ResetW, (int)(myHero.Distance(_W.End) / W.Speed + 6) * 1000);
                     }
                 }
-                else if (args.SData.Name.ToLower() == myHero.Spellbook.GetSpell(SpellSlot.R).SData.Name.ToLower())
+                else if (args.Slot == SpellSlot.R)
                 {
                     if (args.SData.Name.ToLower() == "zedr2")
                     {
@@ -918,7 +861,7 @@ namespace Project_Zed
             }
             if (sender.Type == myHero.Type && sender.Team != myHero.Team && SubMenu["Misc"]["EvadeR1"].Cast<CheckBox>().CurrentValue)
             {
-                if (Extensions.Distance(myHero, sender) < 1000)
+                if (myHero.Distance(sender) < 1000)
                 {
                     AIHeroClient unit = (AIHeroClient)sender;
                     if (SubMenu["Misc"]["EvadeR1"].Cast<CheckBox>().CurrentValue)
@@ -1166,30 +1109,8 @@ namespace Project_Zed
         }
         static float HitChancePercent(SpellSlot s)
         {
-            string slot;
-            switch (s)
-            {
-                case SpellSlot.Q:
-                    slot = "Q";
-                    break;
-                case SpellSlot.W:
-                    slot = "W";
-                    break;
-                case SpellSlot.E:
-                    slot = "E";
-                    break;
-                case SpellSlot.R:
-                    slot = "R";
-                    break;
-                default:
-                    slot = "Q";
-                    break;
-            }
-            if (IsHarass)
-            {
-                return SubMenu["Prediction"][slot + "Harass"].Cast<Slider>().CurrentValue;
-            }
-            return SubMenu["Prediction"][slot + "Combo"].Cast<Slider>().CurrentValue;
+            var slot = s.ToString().Trim();
+            return IsHarass ? SubMenu["Prediction"][slot + "Harass"].Cast<Slider>().CurrentValue : SubMenu["Prediction"][slot + "Combo"].Cast<Slider>().CurrentValue;
         }
         static int GetSlider(Menu m, string s)
         {
@@ -1207,7 +1128,7 @@ namespace Project_Zed
         {
             get
             {
-                return (float)((100 + GetSlider(SubMenu["Misc"], "Overkill")) / 100);
+                return (100 + GetSlider(SubMenu["Misc"], "Overkill")) / 100;
             }
         }
         static bool IsCombo
@@ -1221,7 +1142,7 @@ namespace Project_Zed
         {
             get
             {
-                return Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass);
+                return Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass) || GetKeyBind(SubMenu["Harass"], "Harass2.Key");
             }
         }
         static bool IsClear
