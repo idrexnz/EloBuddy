@@ -56,7 +56,7 @@ namespace The_Ball_Is_Angry
             W.AllowedCollisionCount = int.MaxValue;
             E = new Spell.Skillshot(SpellSlot.E, 1095, SkillShotType.Circular, 0, 1800, 85);
             E.AllowedCollisionCount = int.MaxValue;
-            R = new Spell.Skillshot(SpellSlot.R, 410, SkillShotType.Linear, 500, int.MaxValue, 50);
+            R = new Spell.Skillshot(SpellSlot.R, 400, SkillShotType.Linear, 500, int.MaxValue, 50);
             R.AllowedCollisionCount = int.MaxValue;
             var slot = myHero.GetSpellSlotFromName("summonerdot");
             if (slot != SpellSlot.Unknown)
@@ -459,50 +459,54 @@ namespace The_Ball_Is_Angry
         {
             if (s.IsReady())
             {
-                foreach (Obj_AI_Base minion in EntityManager.MinionsAndMonsters.Get(EntityManager.MinionsAndMonsters.EntityType.Minion, EntityManager.UnitTeam.Enemy, myHero.Position, s.Range + s.Width, true).Where(o => o.Health <= 2.0f * Damage(o, s.Slot)))
+                var enemyminions = EntityManager.MinionsAndMonsters.GetLaneMinions(EntityManager.UnitTeam.Enemy, myHero.Position, s.Range + s.Width, true).Where(o => o.Health <= 2.0f * Damage(o, s.Slot));
+                if (enemyminions.Count() > 0)
                 {
-                    bool CanCalculate = false;
-                    if (minion.IsValidTarget())
+                    foreach (Obj_AI_Base minion in enemyminions)
                     {
-                        if (!Orbwalker.CanAutoAttack)
+                        bool CanCalculate = false;
+                        if (minion.IsValidTarget())
                         {
-                            if (Orbwalker.CanMove && Orbwalker.LastTarget != null && Orbwalker.LastTarget.NetworkId != minion.NetworkId)
+                            if (!Orbwalker.CanAutoAttack)
                             {
-                                CanCalculate = true;
-                            }
-                        }
-                        else
-                        {
-                            if (myHero.GetAutoAttackRange(minion) < Extensions.Distance(myHero, minion))
-                            {
-                                CanCalculate = true;
-                            }
-                            else
-                            {
-                                var speed = myHero.BasicAttack.MissileSpeed;
-                                var time = (int)(1000 * Extensions.Distance(myHero, minion) / speed + myHero.AttackCastDelay * 1000 + Game.Ping - 100);
-                                var predHealth = Prediction.Health.GetPrediction(minion, time);
-                                if (predHealth <= 0)
+                                if (Orbwalker.CanMove && Orbwalker.LastTarget != null && Orbwalker.LastTarget.NetworkId != minion.NetworkId)
                                 {
                                     CanCalculate = true;
                                 }
-                                /**
-                                if (!Orbwalker.CanBeLastHitted(minion))
+                            }
+                            else
+                            {
+                                if (myHero.GetAutoAttackRange(minion) <= Extensions.Distance(myHero, minion))
                                 {
                                     CanCalculate = true;
-                                }**/
+                                }
+                                else
+                                {
+                                    var speed = myHero.BasicAttack.MissileSpeed;
+                                    var time = (int)(1000 * Extensions.Distance(myHero, minion) / speed + myHero.AttackCastDelay * 1000 + Game.Ping - 100);
+                                    var predHealth = Prediction.Health.GetPrediction(minion, time);
+                                    if (predHealth <= 0)
+                                    {
+                                        CanCalculate = true;
+                                    }
+                                    /**
+                                    if (!Orbwalker.CanBeLastHitted(minion))
+                                    {
+                                        CanCalculate = true;
+                                    }**/
+                                }
                             }
                         }
-                    }
-                    if (CanCalculate)
-                    {
-                        var dmg = Damage(minion, s.Slot);
-                        var time = (int)(1000 * Extensions.Distance(s.SourcePosition.Value, minion) / s.Speed + s.CastDelay - 70);
-                        var predHealth = Prediction.Health.GetPrediction(minion, time);
-                        if (time > 0 && predHealth == minion.Health) { return; }
-                        if (dmg > predHealth && predHealth > 0)
+                        if (CanCalculate)
                         {
-                            CastQ(minion);
+                            var dmg = Damage(minion, s.Slot);
+                            var time = (int)(1000 * Extensions.Distance(s.SourcePosition.Value, minion) / s.Speed + s.CastDelay - 70);
+                            var predHealth = Prediction.Health.GetPrediction(minion, time);
+                            if (time > 0 && predHealth == minion.Health) { return; }
+                            if (dmg > predHealth && predHealth > 0)
+                            {
+                                CastQ(minion);
+                            }
                         }
                     }
                 }
@@ -512,13 +516,17 @@ namespace The_Ball_Is_Angry
         {
             if (myHero.ManaPercent >= SubMenu["JungleClear"]["Mana"].Cast<Slider>().CurrentValue)
             {
-                foreach (Obj_AI_Base minion in EntityManager.MinionsAndMonsters.Get(EntityManager.MinionsAndMonsters.EntityType.Monster, EntityManager.UnitTeam.Enemy, myHero.Position, E.Range, true))
+                var jungleminions = EntityManager.MinionsAndMonsters.Get(EntityManager.MinionsAndMonsters.EntityType.Monster, EntityManager.UnitTeam.Enemy, myHero.Position, E.Range, true);
+                if (jungleminions.Count() > 0)
                 {
-                    if (minion.IsValidTarget() && myHero.ManaPercent >= SubMenu["JungleClear"]["Mana"].Cast<Slider>().CurrentValue)
+                    foreach (Obj_AI_Base minion in jungleminions)
                     {
-                        if (SubMenu["JungleClear"]["E"].Cast<CheckBox>().CurrentValue) { CastE(minion); }
-                        if (SubMenu["JungleClear"]["Q"].Cast<CheckBox>().CurrentValue) { CastQ(minion); }
-                        if (SubMenu["JungleClear"]["W"].Cast<CheckBox>().CurrentValue) { CastW(minion); }
+                        if (minion.IsValidTarget() && myHero.ManaPercent >= SubMenu["JungleClear"]["Mana"].Cast<Slider>().CurrentValue)
+                        {
+                            if (SubMenu["JungleClear"]["E"].Cast<CheckBox>().CurrentValue) { CastE(minion); }
+                            if (SubMenu["JungleClear"]["Q"].Cast<CheckBox>().CurrentValue) { CastQ(minion); }
+                            if (SubMenu["JungleClear"]["W"].Cast<CheckBox>().CurrentValue) { CastW(minion); }
+                        }
                     }
                 }
             }
@@ -551,7 +559,7 @@ namespace The_Ball_Is_Angry
 
         private static void CheckMissiles()
         {
-            if (E.IsReady())
+            if (E.IsReady() && missiles.Count > 0)
             {
                 foreach (MissileClient m in missiles.Where(a => a.IsValidMissile()))
                 {
@@ -716,7 +724,7 @@ namespace The_Ball_Is_Angry
         private static int HitW(List<Obj_AI_Base> list)
         {
             int count = 0;
-            if (W.IsReady())
+            if (W.IsReady() && list.Count > 0)
             {
                 foreach (Obj_AI_Base obj in list.Where(obj => obj.IsValidTarget() && Extensions.Distance(obj.ServerPosition, Ball, true) <= W.RangeSquared * 1.5f * 1.5f))
                 {
@@ -762,31 +770,34 @@ namespace The_Ball_Is_Angry
                         Positions.Add(pred.CastPosition.To2D());
                     }
                 }
-                Vector2 bestPos = Vector2.Zero;
-                int bestCount = 0;
-                foreach (Vector2 vec in Positions)
+                if (Positions.Count > 0)
                 {
-                    int count = Positions.Where(v => Extensions.Distance(vec, v, true) < Math.Pow(R.Width * 1.4f, 2)).Count();
-                    if (bestPos == Vector2.Zero)
+                    Vector2 bestPos = Vector2.Zero;
+                    int bestCount = 0;
+                    foreach (Vector2 vec in Positions)
                     {
-                        bestPos = vec;
-                        bestCount = count;
+                        int count = Positions.Where(v => Extensions.Distance(vec, v, true) < Math.Pow(R.Width * 1.4f, 2)).Count();
+                        if (bestPos == Vector2.Zero)
+                        {
+                            bestPos = vec;
+                            bestCount = count;
+                        }
+                        else if (bestCount < count)
+                        {
+                            bestPos = vec;
+                            bestCount = count;
+                        }
                     }
-                    else if (bestCount < count)
+                    if (bestCount >= SubMenu["Combo"]["R2"].Cast<Slider>().CurrentValue)
                     {
-                        bestPos = vec;
-                        bestCount = count;
+                        Q.Cast(bestPos.To3D());
                     }
-                }
-                if (bestCount >= SubMenu["Combo"]["R2"].Cast<Slider>().CurrentValue)
-                {
-                    Q.Cast(bestPos.To3D());
                 }
                 Q.Width = qWidth;
                 Q.CastDelay = qDelay;
             }
         }
-        private static void CastER(AIHeroClient target = null)
+        private static void CastER()
         {
             if (E.IsReady() && R.IsReady())
             {
@@ -818,7 +829,7 @@ namespace The_Ball_Is_Angry
         {
             Dictionary<int, bool> counted = new Dictionary<int, bool>();
             counted[target.NetworkId] = true;
-            if (Q.IsReady())
+            if (Q.IsReady() && list.Count > 0)
             {
                 foreach (Obj_AI_Base obj in list.Where(o => o.IsValidTarget(Q.Range + Q.Width) && target.NetworkId != o.NetworkId))
                 {
@@ -851,7 +862,7 @@ namespace The_Ball_Is_Angry
             Vector3 BestPos = Vector3.Zero;
             int bestHit = -1;
             bool checktarget = target != null && target.IsValidTarget();
-            if (Q.IsReady())
+            if (Q.IsReady() && list.Count > 0)
             {
                 foreach (Obj_AI_Base obj in list.Where(o => o.IsValidTarget(Q.Range + Q.Width)))
                 {
@@ -885,7 +896,7 @@ namespace The_Ball_Is_Angry
         {
             int count = 0;
             Dictionary<int, bool> counted = new Dictionary<int, bool>();
-            if (E.IsReady())
+            if (E.IsReady() && list.Count > 0)
             {
                 foreach (Obj_AI_Base obj in list.Where(o => o.IsValidTarget(E.Range)))
                 {
@@ -918,7 +929,7 @@ namespace The_Ball_Is_Angry
             Obj_AI_Base bestAlly = null;
             int bestHit = 0;
             bool checktarget = target != null && target.IsValidTarget();
-            if (E.IsReady())
+            if (E.IsReady() && list.Count > 0)
             {
                 foreach (Obj_AI_Base ally in EntityManager.Heroes.AllHeroes.Where(o => o.IsValid && o.Team == myHero.Team && Extensions.Distance(myHero, o, true) < E.RangeSquared))
                 {
@@ -1083,14 +1094,7 @@ namespace The_Ball_Is_Angry
                     {
                         if (missiles.Count > 0)
                         {
-                            foreach (MissileClient m in missiles)
-                            {
-                                if (m.NetworkId == missile.NetworkId || Extensions.Distance(m, missile, true) == 0f)
-                                {
-                                    missiles.Remove(m);
-                                    break;
-                                }
-                            }
+                            missiles.RemoveAll(m => m.NetworkId == missile.NetworkId);
                         }
                     }
                 }
@@ -1334,5 +1338,5 @@ namespace The_Ball_Is_Angry
             }
         }
     }
-    
+
 }
