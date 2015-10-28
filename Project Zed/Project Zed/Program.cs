@@ -510,13 +510,13 @@ namespace Project_Zed
                             }
                         }
                     }
-                    if (IsDeadObject != null && SubMenu["Combo"]["SwapDead"].Cast<KeyBind>().CurrentValue)
+                    if (IsDeadObject != null && SubMenu["Combo"]["SwapDead"].Cast<CheckBox>().CurrentValue)
                     {
-                        var HeroCount = myHero.CountEnemiesInRange(400);
+                        var heroCount = myHero.CountEnemiesInRange(400);
                         var wCount = (wShadow != null && W.IsReady()) ? wShadow.CountEnemiesInRange(400) : 1000;
                         var rCount = (rShadow != null && R.IsReady()) ? rShadow.CountEnemiesInRange(400) : 1000;
                         var min = Math.Min(rCount, wCount);
-                        if (HeroCount > min)
+                        if (heroCount > min)
                         {
                             if (min == wCount)
                             {
