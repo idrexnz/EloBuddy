@@ -164,7 +164,7 @@ namespace iAhri
 
         static void KillSteal()
         {
-            foreach (AIHeroClient enemy in HeroManager.Enemies)
+            foreach (var enemy in EntityManager.Heroes.Enemies)
             {
                 if (enemy.IsValidTarget(E.Range) && enemy.HealthPercent <= 40)
                 {
@@ -267,7 +267,7 @@ namespace iAhri
             if (W.IsReady() && target.IsValidTarget())
             {
                 var r = W.GetPrediction(target);
-                if (r.HitChance >= HitChance.High)
+                if (r.HitChance >= HitChance.Medium)
                 {
                     if (target.Type == myHero.Type)
                     {
