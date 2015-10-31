@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using EloBuddy;
 using EloBuddy.Networking;
 using EloBuddy.SDK;
@@ -18,11 +23,15 @@ namespace ToasterBuddy
         private static GamePacket _toasterGamePacket;
         private static string _toasterText = "Waiting for packet.";
         private const int TimeLimit = 250;
-        private static float _startTime;
-        private static bool _toasterGamePacketSent;
-        private static Text Text;
+        private static float _startTime = 0;
+        private static bool _toasterGamePacketSent = false;
+        private static Text text = new Text(_toasterText, new Font("Arial", 20, FontStyle.Bold))
+        {
+            Color = Color.White,
+            Position = new Vector2(10, 10)
+        };
 
-        private static bool ToasterGamePacketIsReady
+        private static bool _toasterGamePacketIsReady
         {
             get { return _toasterGamePacket != null; }
 
@@ -40,7 +49,7 @@ namespace ToasterBuddy
 
         private static void Game_OnTick(EventArgs args)
         {
-            if (ToasterGamePacketIsReady)
+            if (_toasterGamePacketIsReady)
             {
                 if (TimeLimit <= (Game.Time - _startTime) && !_toasterGamePacketSent)
                 {
@@ -60,19 +69,8 @@ namespace ToasterBuddy
 
         private static void Drawing_OnEndScene(EventArgs args)
         {
-            if (Drawing.Direct3DDevice != null)
-            {
-                if (Text == null)
-                {
-                    Text = new Text(_toasterText, new Font("Arial", 20, FontStyle.Bold))
-                    {
-                        Color = Color.White,
-                        Position = new Vector2(10, 10)
-                    };
-                }
-                Text.TextValue = _toasterText;
-                Text.Draw();
-            }
+            text.TextValue = _toasterText;
+            text.Draw();
         }
         private static void Game_OnWndProc(WndEventArgs args)
         {
@@ -81,11 +79,8 @@ namespace ToasterBuddy
                 var escapeKeys = new List<uint> { 27, 32 };
                 if (escapeKeys.Contains(args.WParam))
                 {
-                    if (!_toasterGamePacketSent)
-                    {
-                        _toasterGamePacket.Send();
-                        _toasterGamePacketSent = true;
-                    }
+                    _toasterGamePacket.Send();
+                    _toasterGamePacketSent = true;
                 }
             }
         }
