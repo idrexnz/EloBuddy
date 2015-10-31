@@ -51,7 +51,7 @@ namespace ToasterBuddy
         {
             if (_toasterGamePacketIsReady)
             {
-                if (TimeLimit <= (Game.Time - _startTime))
+                if (TimeLimit <= (Game.Time - _startTime) && !_toasterGamePacketSent)
                 {
                     _toasterGamePacket.Send();
                     _toasterGamePacketSent = true;
