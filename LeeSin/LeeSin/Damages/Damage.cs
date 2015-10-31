@@ -111,11 +111,11 @@ namespace LeeSin
                     ComboDamage += SpellSlot.R.GetSpellDamage(target);
                     ManaWasted += SpellSlot.R.GetSpellDataInst().SData.ManaCostArray[SpellSlot.R.GetSpellDataInst().Level - 1];
                 }
-                if (SpellManager.Ignite_IsReady)
+                if (SpellManager.IgniteIsReady)
                 {
                     ComboDamage += Util.MyHero.GetSummonerSpellDamage(target, DamageLibrary.SummonerSpells.Ignite);
                 }
-                if (SpellManager.Smite_IsReady)
+                if (SpellManager.SmiteIsReady)
                 {
                     ComboDamage += Util.MyHero.GetSummonerSpellDamage(target, DamageLibrary.SummonerSpells.Smite);
                 }

@@ -44,7 +44,7 @@ namespace LeeSin
                         }
                     }
                 }
-                if (Menu.GetCheckBoxValue("Ignite") && SpellManager.Ignite_IsReady && Util.MyHero.GetSummonerSpellDamage(enemy, DamageLibrary.SummonerSpells.Ignite) >= enemy.Health)
+                if (Menu.GetCheckBoxValue("Ignite") && SpellManager.IgniteIsReady && Util.MyHero.GetSummonerSpellDamage(enemy, DamageLibrary.SummonerSpells.Ignite) >= enemy.Health)
                 {
                     SpellManager.Ignite.Cast(enemy);
                 }

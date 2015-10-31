@@ -59,15 +59,15 @@ namespace LeeSin
             var color = new ColorBGRA(255, 255, 255, 100);
             if (Menu.GetCheckBoxValue("Q") && SpellSlot.Q.IsReady())
             {
-                Circle.Draw(color, SpellManager.Q_Range, Util.MyHero.Position);
+                Circle.Draw(color, SpellManager.QRange, Util.MyHero.Position);
             }
             if (Menu.GetCheckBoxValue("W") && SpellSlot.W.IsReady())
             {
-                Circle.Draw(color, SpellManager.W_Range, Util.MyHero.Position);
+                Circle.Draw(color, SpellManager.WRange, Util.MyHero.Position);
             }
             if (Menu.GetCheckBoxValue("E") && SpellSlot.E.IsReady())
             {
-                Circle.Draw(color, SpellManager.E_Range, Util.MyHero.Position);
+                Circle.Draw(color, SpellManager.ERange, Util.MyHero.Position);
             }
             if (Menu.GetCheckBoxValue("R") && SpellSlot.R.IsReady())
             {

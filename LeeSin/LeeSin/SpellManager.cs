@@ -1,48 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using EloBuddy;
 using EloBuddy.SDK;
 using EloBuddy.SDK.Enumerations;
-using EloBuddy.SDK.Events;
-using EloBuddy.SDK.Menu;
-using EloBuddy.SDK.Menu.Values;
-using EloBuddy.SDK.Rendering;
-using SharpDX;
-
 
 namespace LeeSin
 {
     public static class SpellManager
     {
-        public static Spell.Skillshot Q1, W1, RKick, E1, E2 = null;
-        public static Spell.Targeted R = null;
-        public static Spell.Active Q2, W2 = null;
-        public static Spell.Targeted Ignite, Smite = null;
-        public static Spell.Skillshot Flash = null;
-        public static float W1_Range = 700f;
-        public static float W_ExtraRange = 150f;
-        public static float Smite_Delay = 0f;
-        public static float W_LastCastTime, Flash_LastCastTime = 0f;
+        public static Spell.Skillshot Q1, W1, RKick, E1, E2;
+        public static Spell.Targeted R;
+        public static Spell.Active Q2, W2;
+        public static Spell.Targeted Ignite, Smite;
+        public static Spell.Skillshot Flash;
+        public static float W1Range = 700f;
+        public static float WExtraRange = 150f;
+        public static float SmiteCastDelay = 0f;
+        public static float WLastCastTime, FlashLastCastTime;
         public static void Init()
         {
-            Q1 = new Spell.Skillshot(SpellSlot.Q, 1100, SkillShotType.Linear, 250, 1800, 60);
-            Q1.AllowedCollisionCount = 0;
+            Q1 = new Spell.Skillshot(SpellSlot.Q, 1100, SkillShotType.Linear, 250, 1800, 60)
+            {
+                AllowedCollisionCount = 0
+            };
             Q2 = new Spell.Active(SpellSlot.Q, 1300);
 
-            W1 = new Spell.Skillshot(SpellSlot.W, 900, SkillShotType.Linear, 50, 1500, 150);
-            W1.AllowedCollisionCount = int.MaxValue;
+            W1 = new Spell.Skillshot(SpellSlot.W, 900, SkillShotType.Linear, 50, 1500, 150)
+            {
+                AllowedCollisionCount = int.MaxValue
+            };
 
             W2 = new Spell.Active(SpellSlot.W, 700);
 
-            E1 = new Spell.Skillshot(SpellSlot.E, 350, SkillShotType.Linear, 250, 2500, 150);
-            E1.AllowedCollisionCount = int.MaxValue;
-            E2 = new Spell.Skillshot(SpellSlot.E, 675, SkillShotType.Linear, 250, 2500, 150);
-            E2.AllowedCollisionCount = int.MaxValue;
+            E1 = new Spell.Skillshot(SpellSlot.E, 350, SkillShotType.Linear, 250, 2500, 150)
+            {
+                AllowedCollisionCount = int.MaxValue
+            };
+            E2 = new Spell.Skillshot(SpellSlot.E, 675, SkillShotType.Linear, 250, 2500, 150)
+            {
+                AllowedCollisionCount = int.MaxValue
+            };
 
             R = new Spell.Targeted(SpellSlot.R, 375);
-            RKick = new Spell.Skillshot(SpellSlot.R, 275 + 550, SkillShotType.Linear, 400, 600, 75);
-            RKick.AllowedCollisionCount = int.MaxValue;
+            RKick = new Spell.Skillshot(SpellSlot.R, 275 + 550, SkillShotType.Linear, 400, 600, 75)
+            {
+                AllowedCollisionCount = int.MaxValue
+            };
             var slot = Util.MyHero.SpellSlotFromName("summonerdot");
             if (slot != SpellSlot.Unknown)
             {
@@ -60,6 +62,7 @@ namespace LeeSin
             }
 
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
+
         }
         public static bool IsInSmiteRange(this Obj_AI_Base target)
         {
@@ -67,26 +70,24 @@ namespace LeeSin
         }
         public static SpellSlot SpellSlotFromName(this AIHeroClient hero, string name)
         {
-            foreach (SpellDataInst s in hero.Spellbook.Spells)
+            foreach (var s in hero.Spellbook.Spells.Where(s => s.Name.ToLower().Contains(name.ToLower())))
             {
-                if (s.Name.ToLower().Contains(name.ToLower()))
-                {
-                    return s.Slot;
-                }
+                return s.Slot;
             }
             return SpellSlot.Unknown;
         }
+
         private static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
             if (sender.IsMe)
             {
-                if (args.SData.Name.Equals(SpellSlot.W.GetSpellDataInst().SData.Name) && args.SData.Name.ToLower().Contains("one"))
+                if (args.Slot == SpellSlot.W && args.SData.Name.ToLower().Contains("one"))
                 {
-                    W_LastCastTime = Game.Time;
+                    WLastCastTime = Game.Time;
                 }
                 else if (args.SData.Name.ToLower().Contains("flash"))
                 {
-                    Flash_LastCastTime = Game.Time;
+                    FlashLastCastTime = Game.Time;
                 }
             }
         }
@@ -187,7 +188,7 @@ namespace LeeSin
             if (SpellSlot.E.IsReady() && SpellSlot.E.IsFirstSpell() && target.IsValidTarget(E1.Range))
             {
                 var pred = E1.GetPrediction(target);
-                if (pred.HitChance == HitChance.High)
+                if (pred.HitChancePercent >= 50)
                 {
                     Util.MyHero.Spellbook.CastSpell(E1.Slot, true);
                 }
@@ -198,7 +199,7 @@ namespace LeeSin
             if (SpellSlot.E.IsReady() && !SpellSlot.E.IsFirstSpell() && target.IsValidTarget(E2.Range))
             {
                 var pred = E2.GetPrediction(target);
-                if (pred.HitChance == HitChance.High)
+                if (pred.HitChancePercent >= 50)
                 {
                     Util.MyHero.Spellbook.CastSpell(E2.Slot, true);
                 }
@@ -213,12 +214,8 @@ namespace LeeSin
         }
         public static float HitChancePercent(this SpellSlot s)
         {
-            string slot = s.ToString().Trim();
-            if (Harass.IsActive)
-            {
-                return MenuManager.PredictionMenu.GetSliderValue(slot + "Harass");
-            }
-            return MenuManager.PredictionMenu.GetSliderValue(slot + "Combo");
+            var slot = s.ToString().Trim();
+            return Harass.IsActive ? MenuManager.PredictionMenu.GetSliderValue(slot + "Harass") : MenuManager.PredictionMenu.GetSliderValue(slot + "Combo");
         }
         public static bool IsReady(this SpellSlot slot)
         {
@@ -246,7 +243,7 @@ namespace LeeSin
                 return SpellSlot.Q.IsReady() && SpellSlot.Q.IsFirstSpell() && Util.MyHero.Mana >= SpellSlot.Q.GetSpellDataInst().SData.ManaCostArray[SpellSlot.Q.GetSpellDataInst().Level - 1];
             }
         }
-        public static bool Smite_IsReady
+        public static bool SmiteIsReady
         {
             get
             {
@@ -257,7 +254,7 @@ namespace LeeSin
         {
             get
             {
-                if (Smite_IsReady)
+                if (SmiteIsReady)
                 {
                     var name = Smite.Slot.GetSpellDataInst().SData.Name.ToLower();
                     if (name.Contains("smiteduel") || name.Contains("smiteplayerganker"))
@@ -270,7 +267,7 @@ namespace LeeSin
         }
         public static float SmiteDamage(this Obj_AI_Base target)
         {
-            if (target.IsValidTarget() && Smite_IsReady)
+            if (target.IsValidTarget() && SmiteIsReady)
             {
                 if (target is AIHeroClient)
                 {
@@ -287,47 +284,35 @@ namespace LeeSin
             }
             return 0;
         }
-        public static float E_Range
+        public static float ERange
         {
             get
             {
-                if (!SpellSlot.E.IsFirstSpell())
-                {
-                    return E2.Range;
-                }
-                return E1.Range;
+                return !SpellSlot.E.IsFirstSpell() ? E2.Range : E1.Range;
             }
         }
-        public static float Q_Range
+        public static float QRange
         {
             get
             {
-                if (!SpellSlot.Q.IsFirstSpell())
-                {
-                    return Q2.Range;
-                }
-                return Q1.Range;
+                return !SpellSlot.Q.IsFirstSpell() ? Q2.Range : Q1.Range;
             }
         }
-        public static float W_Range
+        public static float WRange
         {
             get
             {
-                if (!SpellSlot.W.IsFirstSpell())
-                {
-                    return W2.Range;
-                }
-                return W1_Range;
+                return !SpellSlot.W.IsFirstSpell() ? W2.Range : W1Range;
             }
         }
-        public static bool Ignite_IsReady
+        public static bool IgniteIsReady
         {
             get
             {
                 return Ignite != null && Ignite.IsReady();
             }
         }
-        public static bool Flash_IsReady
+        public static bool FlashIsReady
         {
             get
             {

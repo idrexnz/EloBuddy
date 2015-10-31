@@ -33,7 +33,7 @@ namespace LeeSin
 
         private static void Game_OnTick(EventArgs args)
         {
-            if (SpellManager.Smite_IsReady)
+            if (SpellManager.SmiteIsReady)
             {
                 if (Menu.GetCheckBoxValue("DragonSteal"))
                 {

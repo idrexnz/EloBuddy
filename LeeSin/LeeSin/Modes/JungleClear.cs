@@ -42,7 +42,7 @@ namespace LeeSin
         }
         public static void Execute()
         {
-            if (SpellManager.Smite_IsReady)
+            if (SpellManager.SmiteIsReady)
             {
                 if (Menu.GetCheckBoxValue("Smite"))
                 {
@@ -59,7 +59,7 @@ namespace LeeSin
             var minion = EntityManager.MinionsAndMonsters.GetJungleMonsters(Util.MyHero.Position, SpellManager.Q1.Range, true).Where(m => m.IsValidTarget()).OrderBy(m => m.MaxHealth).LastOrDefault();
             if (minion != null)
             {
-                if (minion.IsDragon() && SpellManager.Smite_IsReady && SpellSlot.Q.IsReady())
+                if (minion.IsDragon() && SpellManager.SmiteIsReady && SpellSlot.Q.IsReady())
                 {
                     if (2.5f * SpellSlot.Q.GetSpellDamage(minion, 2) + minion.SmiteDamage() >= minion.Health && SpellSlot.Q.GetSpellDamage(minion, 2) + minion.SmiteDamage() <= minion.Health)
                     {
@@ -80,7 +80,7 @@ namespace LeeSin
                             Util.MyHero.Spellbook.CastSpell(SpellSlot.W, true);
                             return;
                         }
-                        if (SpellSlot.E.IsReady() && !SpellSlot.E.IsFirstSpell() && Menu.GetCheckBoxValue("E") && Extensions.Distance(minion, Util.MyHero, true) <= Math.Pow(SpellManager.E_Range, 2))
+                        if (SpellSlot.E.IsReady() && !SpellSlot.E.IsFirstSpell() && Menu.GetCheckBoxValue("E") && Extensions.Distance(minion, Util.MyHero, true) <= Math.Pow(SpellManager.ERange, 2))
                         {
                             Util.MyHero.Spellbook.CastSpell(SpellSlot.E, true);
                             return;
@@ -111,7 +111,7 @@ namespace LeeSin
                         Util.MyHero.Spellbook.CastSpell(SpellSlot.W, true);
                         return;
                     }
-                    if (SpellSlot.E.IsReady() && !SpellSlot.E.IsFirstSpell() && Menu.GetCheckBoxValue("E") && Extensions.Distance(minion, Util.MyHero, true) <= Math.Pow(SpellManager.E_Range, 2))
+                    if (SpellSlot.E.IsReady() && !SpellSlot.E.IsFirstSpell() && Menu.GetCheckBoxValue("E") && Extensions.Distance(minion, Util.MyHero, true) <= Math.Pow(SpellManager.ERange, 2))
                     {
                         Util.MyHero.Spellbook.CastSpell(SpellSlot.E, true);
                         return;
@@ -125,7 +125,7 @@ namespace LeeSin
                             return;
                         }
                     }
-                    if (SpellSlot.E.IsReady() && SpellSlot.E.IsFirstSpell() && Menu.GetCheckBoxValue("E") && Extensions.Distance(minion, Util.MyHero, true) <= Math.Pow(SpellManager.E_Range, 2))
+                    if (SpellSlot.E.IsReady() && SpellSlot.E.IsFirstSpell() && Menu.GetCheckBoxValue("E") && Extensions.Distance(minion, Util.MyHero, true) <= Math.Pow(SpellManager.ERange, 2))
                     {
                         Util.MyHero.Spellbook.CastSpell(SpellSlot.E, true);
                         return;

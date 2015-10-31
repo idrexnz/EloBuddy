@@ -80,9 +80,10 @@ namespace LeeSin
             SubMenu["Insec"].Add("Key", new KeyBind("Insec Key (Make sure that this key is unique)", false, KeyBind.BindTypes.HoldActive, (uint)'R'));
             SubMenu["Insec"].Add("Object", new CheckBox("Use q on enemy hero/minion if can't hit target", true));
             SubMenu["Insec"].AddSeparator(0);
-            SubMenu["Insec"].Add("Flash", new CheckBox("Use flash to return", false));
+            SubMenu["Insec"].Add("Flash.Return", new CheckBox("Use flash to return", false));
             SubMenu["Insec"].AddStringList("Priority", "Priority", new[] { "WardJump > Flash", "Flash > WardJump" }, 0);
             SubMenu["Insec"].AddStringList("Position", "Insec End Position", new[] { "Ally Selected > Position Selected > Turret > Ally Near > Current Position", "Mouse Position", "Current Position" }, 0);
+            SubMenu["Insec"].AddStringList("Flash.Order", "Flash Order", new[] { "R -> Flash", "Flash -> R" },1);
             SubMenu["Insec"].Add("DistanceBetweenPercent", new Slider("% of distance between ward and target", 20, 0, 100));
             SubMenu["Insec"].AddGroupLabel("Tips");
             SubMenu["Insec"].AddLabel("To select an ally just use left click on that ally.");
@@ -118,10 +119,10 @@ namespace LeeSin
 
             SubMenu["Drawings"] = AddonMenu.AddSubMenu("Drawings", "Drawings");
             SubMenu["Drawings"].Add("Disable", new CheckBox("Disable all drawings", false));
-            SubMenu["Drawings"].Add("Q", new CheckBox("Use Q", true));
-            SubMenu["Drawings"].Add("W", new CheckBox("Use W", true));
-            SubMenu["Drawings"].Add("E", new CheckBox("Use E", false));
-            SubMenu["Drawings"].Add("R", new CheckBox("Use R", false));
+            SubMenu["Drawings"].Add("Q", new CheckBox("Draw Q Range", true));
+            SubMenu["Drawings"].Add("W", new CheckBox("Draw W Range", true));
+            SubMenu["Drawings"].Add("E", new CheckBox("Draw E Range", false));
+            SubMenu["Drawings"].Add("R", new CheckBox("Draw R Range", false));
             SubMenu["Drawings"].Add("Combo.Mode", new CheckBox("Draw text of current mode", true));
             SubMenu["Drawings"].Add("Insec.Line", new CheckBox("Draw line of insec", true));
             SubMenu["Drawings"].Add("Target", new CheckBox("Draw circle on target", true));
@@ -155,13 +156,13 @@ namespace LeeSin
                 return m[s].Cast<KeyBind>().CurrentValue;
             return false;
         }
-        public static void AddStringList(this Menu m, string uniqueID, string DisplayName, string[] values, int defaultValue)
+        public static void AddStringList(this Menu m, string uniqueId, string displayName, string[] values, int defaultValue)
         {
-            var mode = m.Add(uniqueID, new Slider(DisplayName, defaultValue, 0, values.Length - 1));
-            mode.DisplayName = DisplayName + ": " + values[mode.CurrentValue];
+            var mode = m.Add(uniqueId, new Slider(displayName, defaultValue, 0, values.Length - 1));
+            mode.DisplayName = displayName + ": " + values[mode.CurrentValue];
             mode.OnValueChange += delegate (ValueBase<int> sender, ValueBase<int>.ValueChangeArgs args)
             {
-                sender.DisplayName = DisplayName + ": " + values[args.NewValue];
+                sender.DisplayName = displayName + ": " + values[args.NewValue];
             };
         }
         public static Menu GetSubMenu(string s)

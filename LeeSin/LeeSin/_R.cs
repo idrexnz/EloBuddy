@@ -81,58 +81,37 @@ namespace LeeSin
 
         public static Tuple<int, AIHeroClient> BestHitR(int minhits)
         {
-            var BestCount = 0;
-            AIHeroClient BestTarget = null;
-            if (SpellSlot.R.IsReady() && EntityManager.Heroes.Enemies.Where(m => m.IsValidTarget(SpellManager.RKick.Range)).Count() >= minhits)
+            var bestCount = 0;
+            AIHeroClient bestTarget = null;
+            if (SpellSlot.R.IsReady() && EntityManager.Heroes.Enemies.Count(m => m.IsValidTarget(SpellManager.RKick.Range)) >= minhits)
             {
-                foreach (AIHeroClient enemy in EntityManager.Heroes.Enemies.Where(m => m.IsValidTarget(SpellManager.R.Range)))
+                foreach (var enemy in EntityManager.Heroes.Enemies.Where(m => m.IsValidTarget(SpellManager.R.Range)))
                 {
                     var width = SpellManager.RKick.Width;//enemy.BoundingRadius;
                     var startpos = enemy.Position.To2D();
                     var endpos = startpos + (startpos - Util.MyHero.Position.To2D()).Normalized() * SpellManager.RKick.Range;
-                    List<Tuple<Vector2, float>> positions = new List<Tuple<Vector2, float>>();
                     SpellManager.RKick.SourcePosition = enemy.Position;
-                    foreach (AIHeroClient enemy2 in EntityManager.Heroes.Enemies.Where(m => m.IsValidTarget(SpellManager.RKick.Range) && m.NetworkId != enemy.NetworkId))
+                    var positions = (from enemy2 in EntityManager.Heroes.Enemies.Where(m => m.IsValidTarget(SpellManager.RKick.Range) && m.NetworkId != enemy.NetworkId) let info = enemy2.Position.To2D().ProjectOn(startpos, endpos) where info.IsOnSegment && Extensions.Distance(info.SegmentPoint, enemy2.Position.To2D(), true) <= Math.Pow(1.8f*(enemy2.BoundingRadius + width), 2) select SpellManager.RKick.GetPrediction(enemy2) into pred where pred.HitChancePercent >= 50 select new Tuple<Vector2, float>(pred.CastPosition.To2D(), enemy.BoundingRadius)).ToList();
+                    var count = 1 + (from t in positions let v = t.Item1 let info = v.ProjectOn(startpos, endpos) where info.IsOnSegment && Extensions.Distance(info.SegmentPoint, v, true) <= Math.Pow((t.Item2 + width), 2) select t).Count();
+                    if (bestCount == 0)
                     {
-                        var info = enemy2.Position.To2D().ProjectOn(startpos, endpos);
-                        if (info.IsOnSegment && Extensions.Distance(info.SegmentPoint, enemy2.Position.To2D(), true) <= Math.Pow(1.8f * (enemy2.BoundingRadius + width), 2))
-                        {
-                            var pred = SpellManager.RKick.GetPrediction(enemy2);
-                            if (pred.HitChancePercent >= 50)
-                            {
-                                positions.Add(new Tuple<Vector2, float>(pred.CastPosition.To2D(), enemy.BoundingRadius));
-                            }
-                        }
+                        bestCount = count;
+                        bestTarget = enemy;
                     }
-                    var Count = 1;
-                    foreach (Tuple<Vector2, float> t in positions)
+                    else if (bestCount < count)
                     {
-                        var v = t.Item1;
-                        var info = v.ProjectOn(startpos, endpos);
-                        if (info.IsOnSegment && Extensions.Distance(info.SegmentPoint, v, true) <= Math.Pow((t.Item2 + width), 2))
-                        {
-                            Count++;
-                        }
-                    }
-                    if (BestCount == 0)
-                    {
-                        BestCount = Count;
-                        BestTarget = enemy;
-                    }
-                    else if (BestCount < Count)
-                    {
-                        BestCount = Count;
-                        BestTarget = enemy;
+                        bestCount = count;
+                        bestTarget = enemy;
                     }
                 }
             }
-            return new Tuple<int, AIHeroClient>(BestCount, BestTarget);
+            return new Tuple<int, AIHeroClient>(bestCount, bestTarget);
         }
         private static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
             if (sender.IsMe)
             {
-                if (args.SData.Name.Equals(SpellSlot.R.GetSpellDataInst().SData.Name))
+                if (args.Slot == SpellSlot.R)
                 {
                     LastCastTime = Game.Time;
                 }
