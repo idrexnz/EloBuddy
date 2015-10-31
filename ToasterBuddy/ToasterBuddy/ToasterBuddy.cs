@@ -51,7 +51,7 @@ namespace ToasterBuddy
                 }
                 else
                 {
-                    _toasterText = "Packet found, you can start the game when you want (using escape or space).\n Time Left: " + Math.Truncate(TimeLimit - (Game.Time - _startTime)) + "s";
+                    _toasterText = "Packet found, you can start the game when you want (using escape or space).\nTime Left: " + Math.Truncate(TimeLimit - (Game.Time - _startTime)) + "s";
                 }
             }
         }
@@ -90,10 +90,13 @@ namespace ToasterBuddy
 
         private static void Send()
         {
-            if (!_toasterGamePacketSent)
+            if (ToasterGamePacketIsReady)
             {
-                _toasterGamePacket.Send();
-                _toasterGamePacketSent = true;
+                if (!_toasterGamePacketSent)
+                {
+                    _toasterGamePacket.Send();
+                    _toasterGamePacketSent = true;
+                }
             }
         }
 
