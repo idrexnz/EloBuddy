@@ -17,13 +17,14 @@ namespace LeeSin
         //Falta agregar laneclear, lasthit.
         public static string Author = "iCreative";
         public static string AddonName = "Master the enemy";
+        public static string PassiveName = "blindmonkpassive_cosmetic";
         public static int PassiveStack
         {
             get
             {
-                if (Util.MyHero.HasBuff("blindmonkpassive_cosmetic"))
+                if (Util.MyHero.HasBuff2(PassiveName))
                 {
-                    return Util.MyHero.GetBuff("blindmonkpassive_cosmetic").Count;
+                    return Util.MyHero.GetBuff2(PassiveName).Count;
                 }
                 return 0;
             }
@@ -97,15 +98,15 @@ namespace LeeSin
             var best = Math.Max(miniondistance, Math.Max(allydistance, warddistance));
             if (best > 0f)
             {
-                if (best == allydistance)
+                if (Math.Abs(best - allydistance) < float.Epsilon)
                 {
                     return ally;
                 }
-                else if (best == miniondistance)
+                else if (Math.Abs(best - miniondistance) < float.Epsilon)
                 {
                     return minion;
                 }
-                else if (best == warddistance)
+                else if (Math.Abs(best - warddistance) < float.Epsilon)
                 {
                     return ward;
                 }
@@ -123,15 +124,15 @@ namespace LeeSin
             var best = Math.Min(miniondistance, Math.Min(allydistance, warddistance));
             if (best <= Math.Pow(250f, 2))
             {
-                if (best == allydistance)
+                if (Math.Abs(best - allydistance) < float.Epsilon)
                 {
                     return ally;
                 }
-                else if (best == miniondistance)
+                else if (Math.Abs(best - miniondistance) < float.Epsilon)
                 {
                     return minion;
                 }
-                else if (best == warddistance)
+                else if (Math.Abs(best - warddistance) < float.Epsilon)
                 {
                     return ward;
                 }

@@ -1,34 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using EloBuddy;
 using EloBuddy.SDK;
-using EloBuddy.SDK.Enumerations;
-using EloBuddy.SDK.Events;
-using EloBuddy.SDK.Menu;
-using EloBuddy.SDK.Menu.Values;
-using EloBuddy.SDK.Rendering;
 using SharpDX;
 
 namespace LeeSin
 {
     public static class Util
     {
-        public static float Extra_AA_Range = 120f;
+        public static float ExtraAaRange = 120f;
         public static AIHeroClient MyHero { get { return ObjectManager.Player; } }
         public static Vector3 MousePos { get { return Game.CursorPos; } }
         public static bool IsValidAlly(this AttackableUnit unit, float range = float.MaxValue)
         {
-            return unit != null && unit.IsValid && !unit.IsDead && Extensions.Distance(MyHero, unit, true) <= Math.Pow(range, 2);
+            return unit != null && unit.IsValid && !unit.IsDead && MyHero.Distance(unit, true) <= Math.Pow(range, 2);
         }
         public static bool IsInAutoAttackRange(this Obj_AI_Base source, Obj_AI_Base target)
         {
             if (Combo.IsActive || Harass.IsActive)
             {
-                return source != null && target != null && source.IsValid && target.IsValid && !source.IsDead && !target.IsDead && Math.Pow(source.BoundingRadius + target.BoundingRadius + source.AttackRange + Extra_AA_Range, 2) >= Extensions.Distance(source, target, true);
+                return source != null && target != null && source.IsValid && target.IsValid && !source.IsDead && !target.IsDead && Math.Pow(source.BoundingRadius + target.BoundingRadius + source.AttackRange + ExtraAaRange, 2) >= Extensions.Distance(source, target, true);
             }
             return source != null && target != null && source.IsValid && target.IsValid && !source.IsDead && !target.IsDead && Math.Pow(source.BoundingRadius + target.BoundingRadius + source.AttackRange, 2) >= Extensions.Distance(source, target, true);
         }
+
+        public static bool HasBuff2(this Obj_AI_Base target, string buffName)
+        {
+            if (target == null || !target.IsValid)
+            {
+                return false;
+            }
+            return target.Buffs.Any(m => m.Name.Equals(buffName));
+        }
+
+        public static BuffInstance GetBuff2(this Obj_AI_Base target, string buffName)
+        {
+            if (target == null || !target.IsValid)
+            {
+                return null;
+            }
+            return target.Buffs.FirstOrDefault(m => m.Name.Equals(buffName));
+        }
+
         public static int GetPriority(this AIHeroClient hero)
         {
             string championName = hero.ChampionName;

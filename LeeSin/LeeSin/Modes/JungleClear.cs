@@ -33,9 +33,9 @@ namespace LeeSin
         {
             get
             {
-                if (Util.MyHero.HasBuff("blindmonkpassive_cosmetic"))
+                if (Util.MyHero.HasBuff2(Champion.PassiveName))
                 {
-                    return Util.MyHero.GetBuff("blindmonkpassive_cosmetic").EndTime - Game.Time < 0.25f + Util.MyHero.AttackCastDelay;
+                    return Util.MyHero.GetBuff2(Champion.PassiveName).EndTime - Game.Time < 0.25f + Util.MyHero.AttackCastDelay;
                 }
                 return false;
             }
