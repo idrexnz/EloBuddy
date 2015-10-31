@@ -45,7 +45,17 @@ namespace LeeSin
                     SpellManager.CastR(t.Item2);
                 }
                 if (Menu.GetCheckBoxValue("E")) { SpellManager.CastE(target); }
-                if (Menu.GetCheckBoxValue("Q")) { SpellManager.CastQ(target); }
+                if (Menu.GetCheckBoxValue("Q") && SpellSlot.Q.IsReady())
+                {
+                    if (SpellSlot.Q.IsFirstSpell())
+                    {
+                        SpellManager.CastQ1(target);
+                    }
+                    else if (!target.HaveR())
+                    {
+                        SpellManager.CastQ2(target);
+                    }
+                }
                 if (Menu.GetCheckBoxValue("W") && SpellSlot.W.IsReady() && !SpellSlot.W.IsFirstSpell() && Util.MyHero.IsInAutoAttackRange(target)) { SpellManager.CastW2(); }
                 if (_Q.IsDashing || _Q.IsWaitingMissile || _Q.HasQ2Buff) { return; }
                 if (Extensions.Distance(Util.MyHero, target, true) > Math.Pow(500, 2) && Menu.GetCheckBoxValue("W") && SpellManager.CanCastW1)

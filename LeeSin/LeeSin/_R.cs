@@ -91,7 +91,7 @@ namespace LeeSin
                     var startpos = enemy.Position.To2D();
                     var endpos = startpos + (startpos - Util.MyHero.Position.To2D()).Normalized() * SpellManager.RKick.Range;
                     SpellManager.RKick.SourcePosition = enemy.Position;
-                    var positions = (from enemy2 in EntityManager.Heroes.Enemies.Where(m => m.IsValidTarget(SpellManager.RKick.Range) && m.NetworkId != enemy.NetworkId) let info = enemy2.Position.To2D().ProjectOn(startpos, endpos) where info.IsOnSegment && Extensions.Distance(info.SegmentPoint, enemy2.Position.To2D(), true) <= Math.Pow(1.8f*(enemy2.BoundingRadius + width), 2) select SpellManager.RKick.GetPrediction(enemy2) into pred where pred.HitChancePercent >= 50 select new Tuple<Vector2, float>(pred.CastPosition.To2D(), enemy.BoundingRadius)).ToList();
+                    var positions = (from enemy2 in EntityManager.Heroes.Enemies.Where(m => m.IsValidTarget(SpellManager.RKick.Range) && m.NetworkId != enemy.NetworkId) let info = enemy2.Position.To2D().ProjectOn(startpos, endpos) where info.IsOnSegment && Extensions.Distance(info.SegmentPoint, enemy2.Position.To2D(), true) <= Math.Pow(1.8f * (enemy2.BoundingRadius + width), 2) select SpellManager.RKick.GetPrediction(enemy2) into pred where pred.HitChancePercent >= 50 select new Tuple<Vector2, float>(pred.CastPosition.To2D(), enemy.BoundingRadius)).ToList();
                     var count = 1 + (from t in positions let v = t.Item1 let info = v.ProjectOn(startpos, endpos) where info.IsOnSegment && Extensions.Distance(info.SegmentPoint, v, true) <= Math.Pow((t.Item2 + width), 2) select t).Count();
                     if (bestCount == 0)
                     {
@@ -114,6 +114,7 @@ namespace LeeSin
                 if (args.Slot == SpellSlot.R)
                 {
                     LastCastTime = Game.Time;
+                    Target = args.Target as AIHeroClient;
                 }
             }
         }

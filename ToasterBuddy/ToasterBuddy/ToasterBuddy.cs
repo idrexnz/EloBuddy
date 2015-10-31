@@ -20,6 +20,7 @@ namespace ToasterBuddy
         private const int TimeLimit = 250;
         private static float _startTime;
         private static bool _toasterGamePacketSent;
+        private static bool _keyPressed ;
 
         private static bool ToasterGamePacketIsReady
         {
@@ -41,7 +42,7 @@ namespace ToasterBuddy
         {
             if (ToasterGamePacketIsReady)
             {
-                if (TimeLimit <= (Game.Time - _startTime))
+                if (TimeLimit <= (Game.Time - _startTime) || _keyPressed)
                 {
                     Send();
                 }
@@ -67,7 +68,7 @@ namespace ToasterBuddy
                 var escapeKeys = new List<uint> { 27, 32 };
                 if (escapeKeys.Contains(args.WParam))
                 {
-                    _startTime = _startTime - TimeLimit;
+                    _keyPressed = true;
                 }
             }
         }
@@ -83,7 +84,10 @@ namespace ToasterBuddy
             {
                 _toasterGamePacket = args.GamePacket;
                 _toasterHeader = args.GamePacket.Header.OpCode;
-                args.Process = false;
+                if (!_keyPressed)
+                {
+                    args.Process = false;
+                }
                 return;
             }
         }

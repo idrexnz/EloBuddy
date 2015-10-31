@@ -35,7 +35,7 @@ namespace LeeSin
 
         private static bool IsPerformingRFlash
         {
-            get { return Game.Time - _lastRFlashInsec < 5 && !SpellSlot.R.IsReady(); }
+            get { return Game.Time - _lastRFlashInsec < 5 && Game.Time - _R.LastCastTime < 5; }
         }
         private static Obj_AI_Base _allySelected;
         private static Vector3 _positionSelected;
@@ -162,7 +162,7 @@ namespace LeeSin
                 Vector3 gapclosepos;
                 switch (Menu.GetSliderValue("Flash.Order"))
                 {
-                    case -1:
+                    case 0:
                         if (Extensions.Distance(target, Util.MyHero, true) <= SpellManager.R.RangeSquared)
                         {
                             _allySelected = null;

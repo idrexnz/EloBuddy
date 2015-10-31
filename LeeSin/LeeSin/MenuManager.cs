@@ -83,7 +83,7 @@ namespace LeeSin
             SubMenu["Insec"].Add("Flash.Return", new CheckBox("Use flash to return", false));
             SubMenu["Insec"].AddStringList("Priority", "Priority", new[] { "WardJump > Flash", "Flash > WardJump" }, 0);
             SubMenu["Insec"].AddStringList("Position", "Insec End Position", new[] { "Ally Selected > Position Selected > Turret > Ally Near > Current Position", "Mouse Position", "Current Position" }, 0);
-            SubMenu["Insec"].AddStringList("Flash.Order", "Flash Order", new[] { "R -> Flash", "Flash -> R" },1);
+            SubMenu["Insec"].AddStringList("Flash.Order", "Flash Order", new[] { "R -> Flash", "Flash -> R" }, 0);
             SubMenu["Insec"].Add("DistanceBetweenPercent", new Slider("% of distance between ward and target", 20, 0, 100));
             SubMenu["Insec"].AddGroupLabel("Tips");
             SubMenu["Insec"].AddLabel("To select an ally just use left click on that ally.");
@@ -156,7 +156,7 @@ namespace LeeSin
                 return m[s].Cast<KeyBind>().CurrentValue;
             return false;
         }
-        public static void AddStringList(this Menu m, string uniqueId, string displayName, string[] values, int defaultValue)
+        public static void AddStringList(this Menu m, string uniqueId, string displayName, string[] values, int defaultValue = 0)
         {
             var mode = m.Add(uniqueId, new Slider(displayName, defaultValue, 0, values.Length - 1));
             mode.DisplayName = displayName + ": " + values[mode.CurrentValue];

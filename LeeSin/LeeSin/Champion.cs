@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using EloBuddy;
 using EloBuddy.SDK;
-using EloBuddy.SDK.Enumerations;
 using EloBuddy.SDK.Events;
-using EloBuddy.SDK.Menu;
-using EloBuddy.SDK.Menu.Values;
-using EloBuddy.SDK.Rendering;
 using SharpDX;
 
 namespace LeeSin
@@ -22,11 +16,7 @@ namespace LeeSin
         {
             get
             {
-                if (Util.MyHero.HasBuff2(PassiveName))
-                {
-                    return Util.MyHero.GetBuff2(PassiveName).Count;
-                }
-                return 0;
+                return Util.MyHero.HasBuff2(PassiveName) ? Util.MyHero.GetBuff2(PassiveName).Count : 0;
             }
         }
         static void Main(string[] args)
@@ -87,14 +77,14 @@ namespace LeeSin
                 }
             }
         }
-        public static Obj_AI_Base GetBestObjectFarFrom(Vector3 Position)
+        public static Obj_AI_Base GetBestObjectFarFrom(Vector3 position)
         {
-            var minion = AllyMinionManager.GetFurthestTo(Position);
-            var ally = AllyHeroManager.GetFurthestTo(Position);
-            var ward = WardManager.GetFurthestTo(Position);
-            var miniondistance = minion != null ? Extensions.Distance(Position, minion, true) : 0;
-            var allydistance = ally != null ? Extensions.Distance(Position, ally, true) : 0;
-            var warddistance = ward != null ? Extensions.Distance(Position, ward, true) : 0;
+            var minion = AllyMinionManager.GetFurthestTo(position);
+            var ally = AllyHeroManager.GetFurthestTo(position);
+            var ward = WardManager.GetFurthestTo(position);
+            var miniondistance = minion != null ? Extensions.Distance(position, minion, true) : 0;
+            var allydistance = ally != null ? Extensions.Distance(position, ally, true) : 0;
+            var warddistance = ward != null ? Extensions.Distance(position, ward, true) : 0;
             var best = Math.Max(miniondistance, Math.Max(allydistance, warddistance));
             if (best > 0f)
             {
@@ -113,14 +103,14 @@ namespace LeeSin
             }
             return null;
         }
-        public static Obj_AI_Base GetBestObjectNearTo(Vector3 Position)
+        public static Obj_AI_Base GetBestObjectNearTo(Vector3 position)
         {
-            var minion = AllyMinionManager.GetNearestTo(Position);
-            var ally = AllyHeroManager.GetNearestTo(Position);
-            var ward = WardManager.GetNearestTo(Position);
-            var miniondistance = minion != null ? Extensions.Distance(Position, minion, true) : 999999999f;
-            var allydistance = ally != null ? Extensions.Distance(Position, ally, true) : 999999999f;
-            var warddistance = ward != null ? Extensions.Distance(Position, ward, true) : 999999999f;
+            var minion = AllyMinionManager.GetNearestTo(position);
+            var ally = AllyHeroManager.GetNearestTo(position);
+            var ward = WardManager.GetNearestTo(position);
+            var miniondistance = minion != null ? Extensions.Distance(position, minion, true) : 999999999f;
+            var allydistance = ally != null ? Extensions.Distance(position, ally, true) : 999999999f;
+            var warddistance = ward != null ? Extensions.Distance(position, ward, true) : 999999999f;
             var best = Math.Min(miniondistance, Math.Min(allydistance, warddistance));
             if (best <= Math.Pow(250f, 2))
             {
