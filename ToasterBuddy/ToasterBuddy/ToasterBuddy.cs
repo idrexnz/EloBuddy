@@ -67,7 +67,7 @@ namespace ToasterBuddy
                 var escapeKeys = new List<uint> { 27, 32 };
                 if (escapeKeys.Contains(args.WParam))
                 {
-                    Send();
+                    _startTime = _startTime - TimeLimit;
                 }
             }
         }
