@@ -155,42 +155,67 @@ namespace LeeSin
                 }
             }
         }
+
+        private static void RFlash(AIHeroClient target)
+        {
+            if (SpellManager.FlashIsReady)
+            {
+                if (Extensions.Distance(target, Util.MyHero, true) <= SpellManager.R.RangeSquared)
+                {
+                    _allySelected = null;
+                    _positionSelected = EndPosition;
+                    _lastSetPositionTime = Game.Time;
+                    _lastRFlashInsec = Game.Time;
+                    TargetSelector.ForcedTarget = target;
+                    SpellManager.CastR(target);
+                }
+            }
+        }
+
+        private static void FlashR(AIHeroClient target)
+        {
+            if (SpellManager.FlashIsReady)
+            {
+                var gapclosepos = target.Position + (target.Position - ExpectedEndPosition).Normalized() * DistanceBetween;
+                var flashendpos = Util.MyHero.Position + (gapclosepos - Util.MyHero.Position).Normalized() * SpellManager.Flash.Range;
+                if (Extensions.Distance(gapclosepos, target, true) <= Math.Pow(SpellManager.R.Range, 2) && Extensions.Distance(target.Position, flashendpos, true) > Math.Pow(50, 2) && Extensions.Distance(flashendpos, target, true) < Extensions.Distance(flashendpos, ExpectedEndPosition, true) && Extensions.Distance(gapclosepos, target, true) < Extensions.Distance(gapclosepos, ExpectedEndPosition, true))
+                {
+                    if (Orbwalker.CanMove)
+                    {
+                        _lastGapcloseAttempt = Game.Time;
+                        //Orbwalker.MoveTo(gapclosepos + (gapclosepos - ExpectedEndPosition).Normalized() * (DistanceBetween + Util.myHero.BoundingRadius / 2));
+                    }
+                    _allySelected = null;
+                    _positionSelected = EndPosition;
+                    _lastSetPositionTime = Game.Time;
+                    TargetSelector.ForcedTarget = target;
+                    Util.MyHero.Spellbook.CastSpell(SpellManager.Flash.Slot, gapclosepos);
+                }
+            }
+        }
+
         private static void Flash(AIHeroClient target)
         {
             if (SpellManager.FlashIsReady)
             {
-                Vector3 gapclosepos;
-                switch (Menu.GetSliderValue("Flash.Order"))
+                switch (Menu.GetSliderValue("Flash.Priority"))
                 {
                     case 0:
-                        if (Extensions.Distance(target, Util.MyHero, true) <= SpellManager.R.RangeSquared)
-                        {
-                            _allySelected = null;
-                            _positionSelected = EndPosition;
-                            _lastSetPositionTime = Game.Time;
-                            _lastRFlashInsec = Game.Time;
-                            TargetSelector.ForcedTarget = target;
-                            SpellManager.CastR(target);
-                            //gapclosepos = target.Position + (target.Position - ExpectedEndPosition).Normalized() * DistanceBetween;
-                            //Util.MyHero.Spellbook.CastSpell(SpellManager.Flash.Slot, gapclosepos);
-                        }
+                        RFlash(target);
+                        break;
+                    case 1:
+                        FlashR(target);
                         break;
                     default:
-                        gapclosepos = target.Position + (target.Position - ExpectedEndPosition).Normalized() * DistanceBetween;
-                        var flashendpos = Util.MyHero.Position + (gapclosepos - Util.MyHero.Position).Normalized() * SpellManager.Flash.Range;
-                        if (Extensions.Distance(gapclosepos, target, true) <= Math.Pow(SpellManager.R.Range, 2) && Extensions.Distance(target.Position, flashendpos, true) > Math.Pow(50, 2) && Extensions.Distance(flashendpos, target, true) < Extensions.Distance(flashendpos, ExpectedEndPosition, true) && Extensions.Distance(gapclosepos, target, true) < Extensions.Distance(gapclosepos, ExpectedEndPosition, true))
+                        if (Extensions.Distance(target, Util.MyHero, true) <= SpellManager.R.RangeSquared)
                         {
-                            if (Orbwalker.CanMove)
-                            {
-                                _lastGapcloseAttempt = Game.Time;
-                                //Orbwalker.MoveTo(gapclosepos + (gapclosepos - ExpectedEndPosition).Normalized() * (DistanceBetween + Util.myHero.BoundingRadius / 2));
-                            }
-                            _allySelected = null;
-                            _positionSelected = EndPosition;
-                            _lastSetPositionTime = Game.Time;
-                            TargetSelector.ForcedTarget = target;
-                            Util.MyHero.Spellbook.CastSpell(SpellManager.Flash.Slot, gapclosepos);
+                            RFlash(target);
                         }
+                        else
+                        {
+                            FlashR(target);
+                        }
+
                         break;
                 }
             }

@@ -82,8 +82,8 @@ namespace LeeSin
             SubMenu["Insec"].AddSeparator(0);
             SubMenu["Insec"].Add("Flash.Return", new CheckBox("Use flash to return", false));
             SubMenu["Insec"].AddStringList("Priority", "Priority", new[] { "WardJump > Flash", "Flash > WardJump" }, 0);
+            SubMenu["Insec"].AddStringList("Flash.Priority", "Flash Priority", new[] { "Only R -> Flash", "Only Flash -> R", "R -> Flash and Flash -> R" }, 2);
             SubMenu["Insec"].AddStringList("Position", "Insec End Position", new[] { "Ally Selected > Position Selected > Turret > Ally Near > Current Position", "Mouse Position", "Current Position" }, 0);
-            SubMenu["Insec"].AddStringList("Flash.Order", "Flash Order", new[] { "R -> Flash", "Flash -> R" }, 0);
             SubMenu["Insec"].Add("DistanceBetweenPercent", new Slider("% of distance between ward and target", 20, 0, 100));
             SubMenu["Insec"].AddGroupLabel("Tips");
             SubMenu["Insec"].AddLabel("To select an ally just use left click on that ally.");

@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using EloBuddy;
 using EloBuddy.SDK;
-using EloBuddy.SDK.Enumerations;
-using EloBuddy.SDK.Events;
 using EloBuddy.SDK.Menu;
-using EloBuddy.SDK.Menu.Values;
-using EloBuddy.SDK.Rendering;
-using SharpDX;
 
 namespace LeeSin
 {
     public static class JungleClear
     {
+        private static float _lastCastTime;
         public static bool IsActive
         {
             get
@@ -35,7 +30,7 @@ namespace LeeSin
             {
                 if (Util.MyHero.HasBuff2(Champion.PassiveName))
                 {
-                    return Util.MyHero.GetBuff2(Champion.PassiveName).EndTime - Game.Time < 0.25f + Util.MyHero.AttackCastDelay;
+                    return Util.MyHero.GetBuff2(Champion.PassiveName).EndTime - Game.Time < Util.MyHero.AttackCastDelay;
                 }
                 return false;
             }
@@ -46,7 +41,7 @@ namespace LeeSin
             {
                 if (Menu.GetCheckBoxValue("Smite"))
                 {
-                    var dragon = EntityManager.MinionsAndMonsters.GetJungleMonsters(Util.MyHero.Position, SpellManager.Q2.Range, true).Where(m => m.IsInSmiteRange() && m.IsDragon()).FirstOrDefault();
+                    var dragon = EntityManager.MinionsAndMonsters.GetJungleMonsters(Util.MyHero.Position, SpellManager.Q2.Range).FirstOrDefault(m => m.IsInSmiteRange() && m.IsDragon());
                     if (dragon != null)
                     {
                         if (dragon.Health <= dragon.SmiteDamage())
@@ -56,7 +51,7 @@ namespace LeeSin
                     }
                 }
             }
-            var minion = EntityManager.MinionsAndMonsters.GetJungleMonsters(Util.MyHero.Position, SpellManager.Q1.Range, true).Where(m => m.IsValidTarget()).OrderBy(m => m.MaxHealth).LastOrDefault();
+            var minion = EntityManager.MinionsAndMonsters.GetJungleMonsters(Util.MyHero.Position, SpellManager.Q1.Range).Where(m => m.IsValidTarget()).OrderBy(m => m.MaxHealth).LastOrDefault();
             if (minion != null)
             {
                 if (minion.IsDragon() && SpellManager.SmiteIsReady && SpellSlot.Q.IsReady())
@@ -65,6 +60,10 @@ namespace LeeSin
                     {
                         return;
                     }
+                }
+                if (Game.Time - _lastCastTime < 0.25f)
+                {
+                    return;
                 }
                 if (Util.MyHero.IsInAutoAttackRange(minion))
                 {
@@ -98,22 +97,26 @@ namespace LeeSin
                         if (SpellSlot.W.IsReady() && SpellSlot.W.IsFirstSpell())
                         {
                             Util.MyHero.Spellbook.CastSpell(SpellSlot.W, Util.MyHero, true);
+                            _lastCastTime = Game.Time;
                             return;
                         }
                     }
                     if (SpellSlot.Q.IsReady() && !SpellSlot.Q.IsFirstSpell() && Menu.GetCheckBoxValue("Q"))
                     {
                         Util.MyHero.Spellbook.CastSpell(SpellSlot.Q, true);
+                        _lastCastTime = Game.Time;
                         return;
                     }
                     if (SpellSlot.W.IsReady() && !SpellSlot.W.IsFirstSpell() && Menu.GetCheckBoxValue("W"))
                     {
                         Util.MyHero.Spellbook.CastSpell(SpellSlot.W, true);
+                        _lastCastTime = Game.Time;
                         return;
                     }
                     if (SpellSlot.E.IsReady() && !SpellSlot.E.IsFirstSpell() && Menu.GetCheckBoxValue("E") && Extensions.Distance(minion, Util.MyHero, true) <= Math.Pow(SpellManager.ERange, 2))
                     {
                         Util.MyHero.Spellbook.CastSpell(SpellSlot.E, true);
+                        _lastCastTime = Game.Time;
                         return;
                     }
                     if (SpellSlot.Q.IsReady() && SpellSlot.Q.IsFirstSpell() && Menu.GetCheckBoxValue("Q"))
@@ -122,12 +125,14 @@ namespace LeeSin
                         if (pred.HitChancePercent >= SpellSlot.Q.HitChancePercent())
                         {
                             Util.MyHero.Spellbook.CastSpell(SpellSlot.Q, pred.CastPosition, true);
+                            _lastCastTime = Game.Time;
                             return;
                         }
                     }
                     if (SpellSlot.E.IsReady() && SpellSlot.E.IsFirstSpell() && Menu.GetCheckBoxValue("E") && Extensions.Distance(minion, Util.MyHero, true) <= Math.Pow(SpellManager.ERange, 2))
                     {
                         Util.MyHero.Spellbook.CastSpell(SpellSlot.E, true);
+                        _lastCastTime = Game.Time;
                         return;
                     }
                     if (Menu.GetCheckBoxValue("W") && minion.IsInAutoAttackRange(Util.MyHero))
@@ -135,6 +140,7 @@ namespace LeeSin
                         if (SpellSlot.W.IsReady() && SpellSlot.W.IsFirstSpell())
                         {
                             Util.MyHero.Spellbook.CastSpell(SpellSlot.W, Util.MyHero, true);
+                            _lastCastTime = Game.Time;
                             return;
                         }
                     }
