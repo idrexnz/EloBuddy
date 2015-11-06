@@ -82,6 +82,7 @@ namespace ToasterBuddy
             }
             if (_firstHeader != args.GamePacket.Header.OpCode && _toasterHeader == -1)
             {
+                _startTime = Game.Time;
                 _toasterGamePacket = args.GamePacket;
                 _toasterHeader = args.GamePacket.Header.OpCode;
                 if (!_keyPressed)
