@@ -14,11 +14,12 @@ namespace LeeSin
         private static readonly Item[] ItemWards =
         {
             new Item(ItemId.Ruby_Sightstone, WardRange),
-            new Item(ItemId.Sightstone, WardRange), new Item(ItemId.Warding_Totem_Trinket, WardRange),
+            new Item(ItemId.Sightstone, WardRange),
+            new Item(2301, WardRange), new Item(2302, WardRange), new Item(2303, WardRange), new Item(1408, WardRange),
+            new Item(3711, WardRange), new Item(1409, WardRange), new Item(1410, WardRange), new Item(1411, WardRange),
+            new Item(ItemId.Warding_Totem_Trinket, WardRange),
             new Item(ItemId.Greater_Stealth_Totem_Trinket, WardRange), new Item(ItemId.Stealth_Ward, WardRange),
             new Item(ItemId.Greater_Vision_Totem_Trinket, WardRange), new Item(ItemId.Vision_Ward, WardRange),
-            new Item(2301, WardRange), new Item(2302, WardRange), new Item(2303, WardRange), new Item(1408, WardRange),
-            new Item(3711, WardRange), new Item(1409, WardRange), new Item(1410, WardRange), new Item(1411, WardRange), 
         };
 
         private static List<Obj_AI_Minion> _wardsAvailable = new List<Obj_AI_Minion>();
@@ -73,7 +74,7 @@ namespace LeeSin
             if (CanWardJump)
             {
                 var endPos = Util.MyHero.Position +
-                             (position - Util.MyHero.Position).Normalized()*
+                             (position - Util.MyHero.Position).Normalized() *
                              Math.Min(WardRange, Util.MyHero.Distance(position));
                 var ward = GetItem;
                 if (ward != null)
