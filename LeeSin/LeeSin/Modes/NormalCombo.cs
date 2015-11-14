@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using EloBuddy;
 using EloBuddy.SDK;
-using EloBuddy.SDK.Enumerations;
-using EloBuddy.SDK.Events;
 using EloBuddy.SDK.Menu;
-using EloBuddy.SDK.Menu.Values;
-using EloBuddy.SDK.Rendering;
-using SharpDX;
 
 namespace LeeSin
 {
@@ -58,7 +51,7 @@ namespace LeeSin
                 }
                 if (Menu.GetCheckBoxValue("W") && SpellSlot.W.IsReady() && !SpellSlot.W.IsFirstSpell() && Util.MyHero.IsInAutoAttackRange(target)) { SpellManager.CastW2(); }
                 if (_Q.IsDashing || _Q.IsWaitingMissile || _Q.HasQ2Buff) { return; }
-                if (Extensions.Distance(Util.MyHero, target, true) > Math.Pow(500, 2) && Menu.GetCheckBoxValue("W") && SpellManager.CanCastW1)
+                if (Util.MyHero.Distance(target, true) > Math.Pow(500, 2) && Menu.GetCheckBoxValue("W") && SpellManager.CanCastW1)
                 {
                     if (Menu.GetCheckBoxValue("Normal.Ward"))
                     {

@@ -15,8 +15,8 @@ namespace LeeSin
         {
             new Item(ItemId.Ruby_Sightstone, WardRange),
             new Item(ItemId.Sightstone, WardRange),
-            new Item(2301, WardRange), new Item(2302, WardRange), new Item(2303, WardRange), new Item(1408, WardRange),
-            new Item(3711, WardRange), new Item(1409, WardRange), new Item(1410, WardRange), new Item(1411, WardRange),
+            new Item(2301, WardRange), new Item(2302, WardRange), new Item(2303, WardRange),
+            new Item(3711, WardRange), new Item(1408, WardRange), new Item(1409, WardRange), new Item(1410, WardRange), new Item(1411, WardRange),
             new Item(ItemId.Warding_Totem_Trinket, WardRange),
             new Item(ItemId.Greater_Stealth_Totem_Trinket, WardRange), new Item(ItemId.Stealth_Ward, WardRange),
             new Item(ItemId.Greater_Vision_Totem_Trinket, WardRange), new Item(ItemId.Vision_Ward, WardRange),
@@ -105,6 +105,7 @@ namespace LeeSin
             {
                 JumpToVector(_lastWardJumpVector);
             }
+            _wardsAvailable.RemoveAll(w => w.IsDead || !w.IsValid);
         }
 
         private static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
