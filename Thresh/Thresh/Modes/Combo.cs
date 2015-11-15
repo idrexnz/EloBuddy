@@ -120,7 +120,7 @@ namespace Thresh
                 }
                 if (Menu.GetSliderValue("R2") > 0)
                 {
-                    if (Util.MyHero.CountEnemiesInRange(SpellManager.R.Range) >= Menu.GetSliderValue("R2"))
+                    if (Util.MyHero.CountEnemiesInside(SpellManager.R.Range) >= Menu.GetSliderValue("R2"))
                     {
                         Util.MyHero.Spellbook.CastSpell(SpellSlot.R);
                     }

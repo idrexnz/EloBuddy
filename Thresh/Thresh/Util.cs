@@ -63,6 +63,11 @@ namespace Thresh
             return list.Where(h => h.IsValidTarget(range)).Sum(h => h.HealthPercent);
         }
 
+        public static int CountEnemiesInside(this AIHeroClient unit, float range = float.MaxValue)
+        {
+            return EntityManager.Heroes.Enemies.Count(h => h.IsValidTarget() && unit.IsInRange(h, range));
+        }
+
         public static bool IsInAutoAttackRange(this Obj_AI_Base source, Obj_AI_Base target)
         {
             if (Combo.IsActive || Harass.IsActive)

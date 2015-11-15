@@ -227,7 +227,7 @@ namespace Thresh
                         {
                             var info = Util.MyHero.Position.To2D().ProjectOn(pred.CastPosition.To2D(), bestPosition.Value.To2D());
                             var distance = info.SegmentPoint.Distance(Util.MyHero.Position.To2D());
-                            if (info.IsOnSegment && distance <= E.Width && pred.CastPosition.Distance(Util.MyHero, true) < pred.CastPosition.Distance(bestPosition.Value, true))
+                            if (info.IsOnSegment && distance <= E.Width)
                             {
                                 Util.MyHero.Spellbook.CastSpell(SpellSlot.E, Util.MyHero.Position + (bestPosition.Value - pred.CastPosition).Normalized() * E.Range);
                                 return;

@@ -24,10 +24,10 @@ namespace Thresh
                     EntityManager.Heroes.Allies.Where(
                         h =>
                             h.IsValidTarget(1300) && !h.IsMe && 
-                            h.CountEnemiesInRange(450) >= MenuManager.MiscMenu.GetSliderValue("W"))
-                        .OrderByDescending(h => h.CountEnemiesInRange(450) * h.GetPriority() / h.HealthPercent)
+                            h.CountEnemiesInside(450) >= MenuManager.MiscMenu.GetSliderValue("W"))
+                        .OrderByDescending(h => h.CountEnemiesInside(450) * h.GetPriority() / h.HealthPercent)
                         .FirstOrDefault();
-                if (ally != null && ally.CountEnemiesInRange(450) > Util.MyHero.CountEnemiesInRange(450))
+                if (ally != null && ally.CountEnemiesInside(450) > Util.MyHero.CountEnemiesInside(450))
                 {
                     SpellManager.CastW(ally);
                 }

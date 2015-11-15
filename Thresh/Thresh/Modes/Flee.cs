@@ -34,8 +34,8 @@ namespace Thresh
         {
             if (Menu.GetCheckBoxValue("W"))
             {
-                var ally = EntityManager.Heroes.Allies.Where(h => h.IsValidTarget(TargetSelector.Range) && !h.IsMe).OrderByDescending(h => h.CountEnemiesInRange(600) * h.GetPriority() / h.HealthPercent).FirstOrDefault();
-                if (ally != null && ally.CountEnemiesInRange(600) > Util.MyHero.CountEnemiesInRange(600))
+                var ally = EntityManager.Heroes.Allies.Where(h => h.IsValidTarget(TargetSelector.Range) && !h.IsMe).OrderByDescending(h => h.CountEnemiesInside(600) * h.GetPriority() / h.HealthPercent).FirstOrDefault();
+                if (ally != null && ally.CountEnemiesInside(600) > Util.MyHero.CountEnemiesInside(600))
                 {
                     SpellManager.CastW(ally);
                 }
