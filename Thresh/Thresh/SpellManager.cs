@@ -50,7 +50,7 @@ namespace Thresh
 
         public static void Init(EventArgs args)
         {
-            Q = new Spell.Skillshot(SpellSlot.Q, 1075, SkillShotType.Linear, 500, 1900, 70) //RealRange = 1075, RealWidth = 70.
+            Q = new Spell.Skillshot(SpellSlot.Q, 1040, SkillShotType.Linear, 500, 1900, 70) //RealRange = 1075, RealWidth = 70.
             {
                 AllowedCollisionCount = 0
             };
@@ -58,7 +58,7 @@ namespace Thresh
             {
                 AllowedCollisionCount = int.MaxValue
             };
-            E = new Spell.Skillshot(SpellSlot.E, 500, SkillShotType.Linear, 0, 2000, 110)
+            E = new Spell.Skillshot(SpellSlot.E, 480, SkillShotType.Linear, 0, 2000, 110)
             {
                 AllowedCollisionCount = int.MaxValue
             };

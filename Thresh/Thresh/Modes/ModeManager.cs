@@ -38,7 +38,7 @@ namespace Thresh
                 var t = EntityManager.Turrets.Allies.FirstOrDefault(t2 => !t2.IsDead && Util.MyHero.IsInRange(t2, 800));
                 if (t != null)
                 {
-                    foreach (var h in EntityManager.Heroes.Enemies.Where(h => h.IsValidTarget() && h.IsInRange(t, 1000)))
+                    foreach (var h in EntityManager.Heroes.Enemies.Where(h => h.IsValidTarget() && h.IsInRange(t, 1100)))
                     {
                         if (MenuManager.MiscMenu.GetCheckBoxValue("Turret.E") && SpellSlot.E.IsReady())
                         {
