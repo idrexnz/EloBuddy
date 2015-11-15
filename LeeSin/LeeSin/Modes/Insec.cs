@@ -328,7 +328,7 @@ namespace LeeSin
                             {
                                 var ally = allies.LastOrDefault();
                                 if (ally != null)
-                                    return ally.Position + (target.Position - ally.Position).Normalized().To2D().Perpendicular().To3D() * (ally.AttackRange + ally.BoundingRadius + target.BoundingRadius) / 2;
+                                    return ally.Position;
                             }
                             break;
 
