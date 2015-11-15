@@ -50,7 +50,7 @@ namespace Thresh
 
         public static void Init(EventArgs args)
         {
-            Q = new Spell.Skillshot(SpellSlot.Q, 1040, SkillShotType.Linear, 500, 1900, 65)
+            Q = new Spell.Skillshot(SpellSlot.Q, 1075, SkillShotType.Linear, 500, 1900, 70) //RealRange = 1075, RealWidth = 70.
             {
                 AllowedCollisionCount = 0
             };
@@ -184,7 +184,7 @@ namespace Thresh
                 Util.MyHero.Spellbook.CastSpell(SpellSlot.W, castPosition);
             }
         }
-        
+
 
         public static void Push(Obj_AI_Base target)
         {
@@ -229,8 +229,8 @@ namespace Thresh
                             var distance = info.SegmentPoint.Distance(Util.MyHero.Position.To2D());
                             if (info.IsOnSegment && distance <= E.Width && pred.CastPosition.Distance(Util.MyHero, true) < pred.CastPosition.Distance(bestPosition.Value, true))
                             {
-                                //Util.MyHero.Spellbook.CastSpell(SpellSlot.E, bestPosition.Value);
-                                //return;
+                                Util.MyHero.Spellbook.CastSpell(SpellSlot.E, Util.MyHero.Position + (bestPosition.Value - pred.CastPosition).Normalized() * E.Range);
+                                return;
                             }
                         }
                     }
