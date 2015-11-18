@@ -58,7 +58,7 @@ namespace Thresh
             {
                 AllowedCollisionCount = int.MaxValue
             };
-            E = new Spell.Skillshot(SpellSlot.E, 480, SkillShotType.Linear, 0, 2000, 110)
+            E = new Spell.Skillshot(SpellSlot.E, 490, SkillShotType.Linear, 0, 2000, 110)
             {
                 AllowedCollisionCount = int.MaxValue
             };
@@ -173,7 +173,7 @@ namespace Thresh
 
         public static void CastQ2(Obj_AI_Base target)
         {
-            if (SpellSlot.Q.IsReady() && !IsQ1 && target != null && target.IsEnemy && QTarget.Distance(Util.MyHero, true) > QTarget.Distance(target, true) && Game.Time - _qArriveTime >= 1.2f)
+            if (SpellSlot.Q.IsReady() && !IsQ1 && target != null && target.IsEnemy && QTarget.Distance(Util.MyHero, true) > QTarget.Distance(target, true) && Game.Time - _qArriveTime >= 1.1f)
             {
                 Util.MyHero.Spellbook.CastSpell(SpellSlot.Q);
             }
