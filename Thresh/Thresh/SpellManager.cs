@@ -50,7 +50,7 @@ namespace Thresh
 
         public static void Init(EventArgs args)
         {
-            Q = new Spell.Skillshot(SpellSlot.Q, 1040, SkillShotType.Linear, 500, 1900, 70) //RealRange = 1075, RealWidth = 70.
+            Q = new Spell.Skillshot(SpellSlot.Q, 1040, SkillShotType.Linear, 500, 1900, 60) //RealRange = 1075, RealWidth = 70.
             {
                 AllowedCollisionCount = 0
             };
@@ -157,10 +157,16 @@ namespace Thresh
         {
             if (SpellSlot.Q.IsReady() && IsQ1 && target != null && target.IsEnemy)
             {
+                Q.Width = 60;
                 var pred = Q.GetPrediction(target);
                 if (pred.HitChancePercent >= Q.Slot.HitChancePercent())
                 {
-                    Q.Cast(pred.CastPosition);
+                    Q.Width = 70;
+                    var pred2 = Q.GetPrediction(target);
+                    if (!pred2.CollisionObjects.Any())
+                    {
+                        Q.Cast(pred.CastPosition);
+                    }
                 }
             }
         }
@@ -216,7 +222,7 @@ namespace Thresh
                     }
                     if (!bestPosition.HasValue)
                     {
-                        if (TargetSelector.Ally != null && !TargetSelector.Ally.IsMe)
+                        if (TargetSelector.Ally != null)
                         {
                             bestPosition = TargetSelector.Ally.Position;
                         }
@@ -227,7 +233,7 @@ namespace Thresh
                         {
                             var info = Util.MyHero.Position.To2D().ProjectOn(pred.CastPosition.To2D(), bestPosition.Value.To2D());
                             var distance = info.SegmentPoint.Distance(Util.MyHero.Position.To2D());
-                            if (info.IsOnSegment && distance <= E.Width)
+                            if (distance <= E.Width)
                             {
                                 Util.MyHero.Spellbook.CastSpell(SpellSlot.E, Util.MyHero.Position + (bestPosition.Value - pred.CastPosition).Normalized() * E.Range);
                                 return;
