@@ -127,7 +127,7 @@ namespace LeeSin
             SubMenu["Drawings"].Add("Insec.Line", new CheckBox("Draw line of insec", true));
             SubMenu["Drawings"].Add("Target", new CheckBox("Draw circle on target", true));
 
-            SubMenu["Flee"] = AddonMenu.AddSubMenu("Flee", "Flee");
+            SubMenu["Flee"] = AddonMenu.AddSubMenu("Flee/WardJump", "Flee");
             SubMenu["Flee"].Add("WardJump", new CheckBox("Use WardJump", true));
             SubMenu["Flee"].Add("W", new CheckBox("Use W on objects near mouse", true));
 
